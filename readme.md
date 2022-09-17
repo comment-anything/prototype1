@@ -15,3 +15,18 @@ This module should be installed in a particular way
 - Install Postgres for your system and follow the instructions to set up your global password and server password
 - Create a database called ......
 - Load the schema with ........
+
+# Set up environment variables
+
+Create a file in the root called `.env`. This will hold private information used across the program. Do not upload this file to github.
+
+Example .env file for default database:
+
+```
+# Database setup
+HOST=localhost
+PORT=5432
+USER=postgres
+PASSWORD=mypassword
+DATABASE_NAME=postgres
+```
