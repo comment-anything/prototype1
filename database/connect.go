@@ -1,7 +1,7 @@
 package database
 
 import (
-	_ "database/sql"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -9,10 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func ConfirmPackage() {
-}
-
-type dbConnectionInfo struct {
+type dbConnector struct {
 	host     string
 	port     string
 	user     string
@@ -20,32 +17,43 @@ type dbConnectionInfo struct {
 	dbname   string
 }
 
-var condat dbConnectionInfo
+var DBConnector dbConnector
 
-func GetConnectionFromEnv() {
-	condat.host = os.Getenv("DB_HOST")
-	if condat.host == "" {
+// GetConnectionDataFromEnv loads the database connection info from the .env file in the project root and terminates the program if unable to do so.
+func GetConnectionDataFromEnv() {
+	DBConnector.host = os.Getenv("DB_HOST")
+	if DBConnector.host == "" {
 		badEnvTerminate("DB_HOST")
 	}
-	condat.port = os.Getenv("DB_PORT")
-	if condat.port == "" {
+	DBConnector.port = os.Getenv("DB_PORT")
+	if DBConnector.port == "" {
 		badEnvTerminate("DB_PORT")
 	}
-	condat.user = os.Getenv("DB_USER")
-	if condat.user == "" {
+	DBConnector.user = os.Getenv("DB_USER")
+	if DBConnector.user == "" {
 		badEnvTerminate("DB_USER")
 	}
-	condat.password = os.Getenv("DB_PASSWORD")
-	if condat.password == "" {
+	DBConnector.password = os.Getenv("DB_PASSWORD")
+	if DBConnector.password == "" {
 		badEnvTerminate("DB_PASSWORD")
 	}
-	condat.dbname = os.Getenv("DB_DATABASE_NAME")
-	if condat.dbname == "" {
+	DBConnector.dbname = os.Getenv("DB_DATABASE_NAME")
+	if DBConnector.dbname == "" {
 		badEnvTerminate("DB_DATABASE_NAME")
 	}
 	fmt.Println(" DB env variables loaded.")
 }
-
 func badEnvTerminate(name string) {
 	log.Fatalf(" Error parsing environment variable %v. Terminating.\n", name)
+}
+
+// Connect connects to the database and returns the sql database object. After being queried, callers should call `Close` on the returned sql.DB.
+func (db dbConnector) Connect() *sql.DB {
+	psqlstring := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", db.host, db.port, db.user, db.password, db.dbname)
+	postgres, err := sql.Open("postgres", psqlstring)
+	if err != nil {
+		postgres.Close()
+		panic(err)
+	}
+	return postgres
 }

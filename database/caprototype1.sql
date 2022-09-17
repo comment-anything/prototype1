@@ -1,46 +1,54 @@
-CREATE SCHEMA "Users";
+CREATE SCHEMA IF NOT EXISTS "Users";
 
-CREATE TYPE "Users"."AccessLevels" AS ENUM (
-  'Poster',
-  'DomainModerator',
-  'GlobalModerator',
-  'Administrator'
-);
+DO $$
+		BEGIN
+			IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='AccessLevels')
+			THEN
+				CREATE TYPE "Users"."AccessLevels" AS ENUM (
+					'Poster',
+					'DomainModerator',
+					'GlobalModerator',
+					'Administrator'
+				);
+			END IF;
+END$$;
 
-CREATE TABLE "Users" (
-  "ID" SERIAL PRIMARY KEY,
-  "Username" varchar,
-  "CreatedAt" timestamp,
-  "LastLogin" timestamp,
-  "Email" varchar,
-  "Access" Users.AccessLevels,
-  "CountryCode" int,
-  "PasswordHash" varchar,
-  "Session" int
-);
+CREATE TABLE IF NOT EXISTS "Users"."Users"
+		(
+			"ID" integer NOT NULL,
+			"Username" varchar(30) NOT NULL,
+			"CreatedAt" timestamp,
+			"LastLogin" timestamp,
+			"Email" varchar(30),
+			"Access" "Users"."AccessLevels",
+			"CountryCode" integer,
+			"PasswordHash" varchar(30) NOT NULL,
+			"SessionID" integer,
+			CONSTRAINT "Users_pkey" PRIMARY KEY ("ID")
+		);
 
-CREATE TABLE "Sessions" (
+CREATE TABLE IF NOT EXISTS "Sessions" (
   "ID" SERIAL PRIMARY KEY,
   "CreatedAt" timestamp,
   "Expires" timestamp
 );
 
-CREATE TABLE "DomainModerationAssignments" (
+CREATE TABLE IF NOT EXISTS "DomainModerationAssignments" (
   "ModeratorID" int,
   "Domain" varchar,
   "isMasterOfDomain" boolean
 );
 
-CREATE TABLE "Domains" (
+CREATE TABLE IF NOT EXISTS "Domains" (
   "ID" varchar UNIQUE PRIMARY KEY NOT NULL
 );
 
-CREATE TABLE "DomainPaths" (
+CREATE TABLE IF NOT EXISTS "DomainPaths" (
   "ID" varchar PRIMARY KEY,
   "Domain" varchar
 );
 
-CREATE TABLE "Comments" (
+CREATE TABLE IF NOT EXISTS "Comments" (
   "ID" SERIAL PRIMARY KEY,
   "PostedAt" domainPaths,
   "CreatedAt" timestamp,
@@ -49,7 +57,7 @@ CREATE TABLE "Comments" (
   "Respectables" int
 );
 
-CREATE TABLE "Countries" (
+CREATE TABLE IF NOT EXISTS "Countries" (
   "Code" int PRIMARY KEY,
   "Name" varchar,
   "ContinentName" varchar
