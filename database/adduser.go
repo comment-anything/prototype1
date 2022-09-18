@@ -1,6 +1,8 @@
 package database
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -8,13 +10,13 @@ import (
 type User struct {
 	ID           int
 	Username     string
-	CreatedAt    time.Time
-	LastLogin    time.Time
+	CreatedAt    int64
+	LastLogin    int64
 	Email        string
 	Access       UserAccessLevel
 	CountryCode  int
 	PasswordHash string
-	SessionID    int
+	SessionID    sql.NullInt64
 }
 
 type UserAccessLevel byte
@@ -32,8 +34,8 @@ func CreateUser(username string, email string, access UserAccessLevel, countryCo
 	user := User{
 		/** We need to validate the uniqueness of usernames, unless we will allow changing of usernames and include an id field. We will steel to validate to ensure they don't have sql breaking characters like commas and quotes. */
 		Username:  username,
-		CreatedAt: time.Now(),
-		LastLogin: time.Now(),
+		CreatedAt: time.Now().Unix(),
+		LastLogin: time.Now().Unix(),
 		/** We need to validate the email. */
 		Email:       email,
 		Access:      access,
@@ -52,8 +54,8 @@ func CreateUser(username string, email string, access UserAccessLevel, countryCo
 		"PasswordHash"
 		) values('%s', %v, %v, '%s', %d, '%s');`,
 		user.Username,
-		user.CreatedAt.Unix(),
-		user.LastLogin.Unix(),
+		user.CreatedAt,
+		user.LastLogin,
 		user.Email,
 		user.CountryCode,
 		user.PasswordHash)
@@ -66,4 +68,31 @@ func CreateUser(username string, email string, access UserAccessLevel, countryCo
 	}
 
 	return &user, nil
+}
+
+func GetUser(id int) (*User, error) {
+	var user User
+	queryStatement := fmt.Sprintf(`
+		select "ID", "Username", "Email", "Access", "CountryCode", "PasswordHash", "CreatedAt", "LastLogin", "SessionID" from "Users"."Users" where "ID"=%v`, id)
+	rows, err := DB.Postgres.Query(queryStatement)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		err = rows.Scan(&user.ID,
+			&user.Username,
+			&user.Email,
+			&user.Access,
+			&user.CountryCode,
+			&user.PasswordHash,
+			&user.CreatedAt,
+			&user.LastLogin,
+			&user.SessionID)
+		if err != nil {
+			return nil, err
+		} else {
+			return &user, err
+		}
+	}
+	return nil, errors.New("Unable to find user.")
 }

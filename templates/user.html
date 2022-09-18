@@ -1,0 +1,42 @@
+{{define "body"}}
+
+<h3>Information about: {{.Username}}</h3>
+
+<table>
+    <tr>
+        <td>Username</td>
+        <td>{{.Username}}</td>
+    </tr>
+    <tr>
+        <td>Created At</td>
+        <td class="date">{{.CreatedAt}}</td>
+    </tr>
+    <tr>
+        <td>Last Login</td>
+        <td class="date">{{.LastLogin}}</td>
+    </tr>
+    <tr>
+        <td>Email</td>
+        <td>{{.Email}}</td>
+    </tr>
+    <tr>
+        <td>Access Level</td>
+        <td>
+            {{if (eq .Access 0)}}
+            Poster
+            {{else if(eq .Access 1)}}
+            Domain Moderator
+            {{else if(eq .Access 2)}}
+            Global Moderator
+            {{else if(eq.Access 3)}}
+            Administrator
+            {{end}}
+        </td>
+    </tr>
+    <tr>
+        <td>Country Code</td>
+        <td>{{.CountryCode}}</td>
+    </tr>
+</table>
+
+{{ end }}

@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/comment-anything/prototype1/database"
+	"github.com/comment-anything/prototype1/views"
 	"github.com/joho/godotenv"
 )
 
@@ -17,6 +18,7 @@ func main() {
 	database.BuildConnectorAndConnect()
 	database.BuildFromSQL()
 	//database.CreateUser("klm127", "k@k.com", 4, 1, "hi")
+	views.StartServer()
 	database.Disconnect()
 	fmt.Println(" Prototype Ended. ")
 }

@@ -34,11 +34,12 @@ Example .env file for default database:
 
 ```
 # Database setup
-HOST=localhost
-PORT=5432
-USER=postgres
-PASSWORD=mypassword
-DATABASE_NAME=postgres
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=mypass
+DB_DATABASE_NAME=postgres
+SERVER_PORT=8080
 ```
 
 
