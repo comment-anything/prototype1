@@ -1,5 +1,13 @@
 
-This module should be installed in a particular way
+# Prototype1
+
+This will be a minimum proof of concept for the back end to test out some stuff and check feasibility. 
+
+I've already deviated from the database i sketched for this but its viewable in `database/caprototype1.png` 
+
+![A sketch of a relational database](https://github.com/comment-anywhere/prototype1/blob/main/database/carprototype.png)
+
+I think Rapid Prototyping a little is going to help me understand the design needs a lot.
 
 # Installing
 
@@ -10,11 +18,13 @@ This module should be installed in a particular way
 - Inside `.../go/src/github.com/comment-anything/` run the `git clone` operation
 - This module will be saved to, for example `C:/Users/karlm/go/src/github.com/comment-anything/prototype1`
 
+This is the best practices way to do things in go. 
+
 # Installing Postgres
 
 - Install Postgres for your system and follow the instructions to set up your global password and server password
-- Create a database called ......
-- Load the schema with ........
+- Create a database called ...... (probably postgres)
+- Play around with pgAdmin so you can see the database; you may have the manually refresh the tables in pgAdmin to see db updates.
 
 # Set up environment variables
 
