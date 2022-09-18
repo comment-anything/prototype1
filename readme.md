@@ -30,3 +30,11 @@ USER=postgres
 PASSWORD=mypassword
 DATABASE_NAME=postgres
 ```
+
+
+# Running
+
+```
+> go get .
+> go run .
+```

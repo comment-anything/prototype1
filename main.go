@@ -16,4 +16,6 @@ func main() {
 	}
 	database.GetConnectionDataFromEnv()
 	database.BuildFromSQL()
+
+	database.CreateUser("klm127", "k@k.com", "Poster", 1, "hi")
 }
