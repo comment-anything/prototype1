@@ -1,0 +1,25 @@
+
+{{ define "body" }}
+<form method="POST">
+    <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="Email" placeholder="name@example.com">
+    </div>
+    <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="Username">
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="Password">
+    </div>
+    <div>
+        <label for="password">Retype Password</label>
+        <input type="password" id="password" name="Password2">
+    </div>
+    <input type="submit" name="submit" value="Register">
+</form>
+{{ if .ErrorString }}
+<div style="color:darkred;">{{ .ErrorString }}</div>
+{{ end }}
+{{ end }}

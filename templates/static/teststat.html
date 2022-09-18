@@ -2,10 +2,9 @@
 <script>
     let els = document.getElementsByClassName("date")
     for(let i = 0; i < els.length; i++) {
-        console.log(els[i].textContent)
-        let dstring = parseInt(els[i].textContent)
-        if (dstring != NaN) {
-            let date = new Date(dstring*1000)
+        let epochSeconds = parseInt(els[i].textContent)
+        if (epochSeconds != NaN) {
+            let date = new Date(epochSeconds*1000)
             els[i].textContent = date.toString()
             console.log(date)
         }
