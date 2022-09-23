@@ -8,8 +8,8 @@ import (
 )
 
 func StartServer() {
-	http.HandleFunc("/user/", getUser)
-	http.HandleFunc("/register/", getRegister)
+	//http.HandleFunc("/user/", getUser)
+	//http.HandleFunc("/register/", getRegister)
 
 	server_port := ":" + os.Getenv("SERVER_PORT")
 	if server_port == "" {
