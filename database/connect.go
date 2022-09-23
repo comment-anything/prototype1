@@ -31,7 +31,7 @@ func BuildConnectorAndConnect() {
 	if DB.Credentials.host == "" {
 		badEnvTerminate("DB_HOST")
 	}
-	DB.Credentials.port = os.Getenv("DB_PORT")
+	DB.Credentials.port = os.Getenv("DB_HOST_PORT")
 	if DB.Credentials.port == "" {
 		badEnvTerminate("DB_PORT")
 	}
