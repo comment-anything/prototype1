@@ -2,15 +2,12 @@ include .env
 
 dependencies:
 	docker pull ${DB_IMAGE}
-	go get .
-	go install github.com/kyleconroy/sqlc/cmd/sqlc@1.15.0
-	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
-	
-
-windowsdevdependencies:
 	docker pull kjconroy/sqlc
+	go get .
+	@echo go install github.com/kyleconroy/sqlc/cmd/sqlc@1.15.0
+	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
-sqlcgenerate:
+sqlc:
 	docker run --rm -v "$(CURDIR):/src" -w /src kjconroy/sqlc generate
 
 postgres:
@@ -46,4 +43,5 @@ psql:
 
 dbshell:
 	docker exec -it ${DB_CONTAINER_NAME} /bin/sh
+
 
