@@ -9,9 +9,13 @@ INSERT INTO "Users" (
 ) RETURNING *;
 
 
--- name: GetUser :one
+-- name: GetUserByUserName :one
 SELECT * FROM "Users"
 WHERE "username" = $1 LIMIT 1;
+
+-- name: GetUserByEmail :one
+SELECT * FROM "Users"
+WHERE "email" = $1 LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM "Users"

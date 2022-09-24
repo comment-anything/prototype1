@@ -17,15 +17,24 @@ type dbCredentials struct {
 	dbname   string
 }
 
+/*
+dbConnector holds a reference to the credentials and an instance of a Postgres db.
+
+@Todo: Replace with the generated DBX from /sqlc/db.go?
+*/
 type dbConnector struct {
 	Credentials dbCredentials
 	Postgres    *sql.DB
 }
 
-/** DB will be used throughout the program to connect to the database **/
+/*
+* DB will be used throughout the program to connect to the database.
+
+@Todo: Or will it? Replace with DBX from /sqlc/db.go?
+*/
 var DB dbConnector
 
-// BuildConnectorAndConnect loads the database connection info from the .env file in the project root and terminates the program if unable to do so. It then attempts to connect to the database.
+// BuildConnectorAndConnect loads the database connection credentials from the .env file in the project root and terminates the program if unable to do so. It then initializes a *sql.DB and attempts to connect to it, storing that database handle in the dbConnector singleton if it succeeds.
 func BuildConnectorAndConnect() {
 	DB.Credentials.host = os.Getenv("DB_HOST")
 	if DB.Credentials.host == "" {
@@ -58,10 +67,13 @@ func BuildConnectorAndConnect() {
 		fmt.Println(" Database Connection established.")
 	}
 }
+
+// badEnvTerminate is called if an environment variable is not set properly; the program cannot function if it can't connect to the database.
 func badEnvTerminate(name string) {
 	log.Fatalf(" Error parsing environment variable %v. Terminating.\n", name)
 }
 
+// Disconnect closes the Postgres database connection.
 func Disconnect() {
 	fmt.Println(" Disconnected from Database.")
 	DB.Postgres.Close()
