@@ -17,7 +17,7 @@ This is a minimum proof of concept to:
 - Clone the repo `git clone github.com/comment-anything/prototype1.git`
 - This module will be saved to, for example `C:/Users/karlm/go/src/github.com/comment-anything/prototype1`
 
-This is the best practices way to do things in go. Read more about [Gopath here](https://golangr.com/what-is-gopath/). You can also set up custom workspaces but if you are not going to write a lot of conflicting Go code, using the default go path is probably the way to go.
+Read more about [Gopath here](https://golangr.com/what-is-gopath/). You can also set up custom workspaces but if you are not going to write a lot of conflicting Go code, using the default go path is probably the way to go.
 
 ## Set up environment variables
 
@@ -58,7 +58,7 @@ If you are on Windows you will also need *make*. You can get make by installing 
 
 Use the `make` commands to get other dependencies and run the servers.
 
-```bash
+```shell
 make dependencies
 make postgres
 ```
@@ -66,5 +66,13 @@ make postgres
 You can then use make commands to access the database server
 `make psql` will open the psql cli on the postgres docker container
 `make dbshell` will open up the linux shell on the postgres docker container
+
+And you can build the database tables.
+
+```shell
+make createdb
+make migrateup
+```
+
 
 
