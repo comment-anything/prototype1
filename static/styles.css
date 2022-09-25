@@ -1,0 +1,53 @@
+/* These variables can be used anywhere in the style sheet with the var(--name) command. */
+:root {
+   --lightblue: #5555ff;
+   --darkblue: #1b02f8;
+   --offwhite: #fafdfd;
+   --mainbg: var(--darkblue);
+   --maincolor: var(--offwhite);
+   --mainfont: Courier New, Consolas, monospace;
+   --linkcolor: rgb(152, 219, 161);
+   --linkhover: rgb(202, 235, 55);
+   --linkvisited: rgb(25, 131, 43);
+   --bodypadding: 25px;
+   --compbackground: rgb(40, 39, 46);
+   --compcolor: rgb(255,255,255);
+   --comppadding: 12px;
+   --compmargin: 12px;
+   --compradius: 5px;
+   --compshadowborderbottom: 5px solid rgb(61, 47, 47);
+   --compshadowborderright: 5px solid rgb(65, 59, 59);
+}
+
+body {
+    background-color: var(--mainbg);
+    color: var(--maincolor);
+    font-family: var(--mainfont);
+    padding-left: var(--bodypadding);
+    padding-right: var(--bodypadding);
+}
+
+h1, section {
+    background-color: var(--compbackground);
+    color: var(--compcolor);
+    padding: var(--comppadding);
+    margin-top: var(--compmargin);
+    margin-bottom: var(--compmargin);
+    border-radius: var(--compradius);
+    border-right: var(--compshadowborderright);
+    border-bottom: var(--compshadowborderbottom);
+    
+}
+
+a {
+    color: var(--linkcolor);
+}
+a:hover {
+    color: var(--linkhover);
+}
+a:visited {
+    color: var(--linkvisited);
+}
+a:visited:hover {
+    color: var(--linkhover);
+}

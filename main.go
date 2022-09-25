@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/comment-anything/prototype1/database"
-	"github.com/comment-anything/prototype1/views"
+	"github.com/comment-anything/prototype1/server"
 	"github.com/joho/godotenv"
 )
 
@@ -16,7 +16,7 @@ func main() {
 		log.Fatal("Error loading .env file. Ensure there is a well-formatted .env file in the root of the project. See https://github.com/joho/godotenv and the readme for more information.")
 	}
 	database.BuildConnectorAndConnect()
-	views.StartServer()
+	server.StartServer()
 	database.Disconnect()
 	fmt.Println(" Prototype Ended. ")
 }

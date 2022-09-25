@@ -43,4 +43,6 @@ psql:
 dbshell:
 	docker exec -it ${DB_CONTAINER_NAME} /bin/sh
 
-
+serve:
+	go run .
+	
