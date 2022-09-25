@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="/static/styles.css">
+        <title>
+        {{block "title" .}}
+        {{ end }}
+        </title>
     </head>
     <body>
-        <nav id="topnav"></nav>
-        <h1>Prototype1</h1>
-        <div id="maincontent">
-        {{block "body" . }}
-        {{ end }}
-        </div>
-        {{ block "embedded" . }}
-        {{ end }}
+        <h1><a href="./">Prototype1 - {{block "title" . }}{{end}}</a></h1>
+        <section>
+            {{block "body" .}}
+            {{ end }}
+        </section>
+        <footer>
+            Created by the Comment Anywhere Group
+        </footer>
     </body>
 </html>

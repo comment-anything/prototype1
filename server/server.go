@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/comment-anything/prototype1/templates"
 	"github.com/gorilla/mux"
 )
 
@@ -25,17 +26,25 @@ func StartServer() {
 	r := mux.NewRouter()
 
 	// Serve the static index page on root.
-	r.Handle("/", http.FileServer(http.Dir("./views")))
+	r.Handle("/", http.HandlerFunc(IndexPath))
+	r.Handle("/bad", http.HandlerFunc(InvalidPath))
 
 	// Serve static assets like images and css.
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
-
 	server_port := ":" + os.Getenv("SERVER_PORT")
 	if server_port == "" {
 		fmt.Println(" Environment variable SERVER_PORT must be specified. ")
 		panic(" Bad SERVER_PORT env variable. ")
 	}
 	fmt.Println(" Server starting on port " + server_port)
-	log.Fatal(http.ListenAndServe(server_port, r))
+	log.Fatal(http.ListenAndServe(server_port, LogAllRequests(r)))
+}
+
+func IndexPath(w http.ResponseWriter, r *http.Request) {
+	templates.IndexView.Execute(w, "")
+}
+
+func InvalidPath(w http.ResponseWriter, r *http.Request) {
+	templates.ErrorView.Execute(w, "")
 }

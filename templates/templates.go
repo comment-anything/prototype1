@@ -5,11 +5,14 @@ import (
 	"html/template"
 )
 
-var UserViewSingle *template.Template
-var RegistrationView *template.Template
+var IndexView *template.Template
+var ErrorView *template.Template
 
-//go:embed base.html
-var baseTemplate string
+//go:embed index.html
+var indexTemplate string
+
+//go:embed error.html
+var errorTemplate string
 
 //go:embed user.html
 var userViewBase string
@@ -20,11 +23,16 @@ var registerBase string
 //go:embed static/teststat.html
 var dateConv string
 
-func init() {
-	base := template.Must(template.New("base").Parse(baseTemplate))
-	userpartial := template.Must(base.Parse(userViewBase))
-	UserViewSingle = template.Must(userpartial.Parse(dateConv))
-	base = template.Must(template.New("base").Parse(baseTemplate))
-	RegistrationView = template.Must(base.Parse(registerBase))
+//go:embed base.html
+var baseTemplate string
 
+func init() {
+	IndexView = getTemplate(indexTemplate)
+	ErrorView = getTemplate(errorTemplate)
+}
+
+func getTemplate(pageTemplate string) *template.Template {
+	base := template.Must(template.New("base").Parse(baseTemplate))
+	built := template.Must(base.Parse(pageTemplate))
+	return built
 }
