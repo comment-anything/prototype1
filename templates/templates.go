@@ -27,8 +27,8 @@ var dateConv string
 var baseTemplate string
 
 func init() {
-	IndexView = getTemplate(indexTemplate)
 	ErrorView = getTemplate(errorTemplate)
+	IndexView = getTemplate(indexTemplate)
 }
 
 func getTemplate(pageTemplate string) *template.Template {

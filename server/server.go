@@ -24,21 +24,26 @@ func StartServer() {
 
 	// Instantiate the gorilla/mux router.
 	r := mux.NewRouter()
+	r.NotFoundHandler = http.HandlerFunc(InvalidPath)
+	r.MethodNotAllowedHandler = http.HandlerFunc(InvalidPath)
 
 	// Serve the static index page on root.
-	r.Handle("/", http.HandlerFunc(IndexPath))
-	r.Handle("/bad", http.HandlerFunc(InvalidPath))
+	r.HandleFunc("/", IndexPath)
+	r.HandleFunc("/bad", InvalidPath)
 
 	// Serve static assets like images and css.
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+
+	// Start the server.
+
 	server_port := ":" + os.Getenv("SERVER_PORT")
 	if server_port == "" {
 		fmt.Println(" Environment variable SERVER_PORT must be specified. ")
 		panic(" Bad SERVER_PORT env variable. ")
 	}
 	fmt.Println(" Server starting on port " + server_port)
-	log.Fatal(http.ListenAndServe(server_port, LogAllRequests(r)))
+	log.Fatal(http.ListenAndServe(server_port, r))
 }
 
 func IndexPath(w http.ResponseWriter, r *http.Request) {

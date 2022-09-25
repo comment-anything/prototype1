@@ -36,7 +36,9 @@ h1, section {
     border-radius: var(--compradius);
     border-right: var(--compshadowborderright);
     border-bottom: var(--compshadowborderbottom);
-    
+}
+h1 {
+    text-align: center;
 }
 
 a {
@@ -50,4 +52,8 @@ a:visited {
 }
 a:visited:hover {
     color: var(--linkhover);
+}
+h1 > a , h1 > a:visited{
+    color: var(--compcolor);
+    text-decoration: none;
 }
