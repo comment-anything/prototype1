@@ -1,4 +1,6 @@
-package database
+package generated
+
+// user_test.go contains unit tests for the generated code related to the Users table.
 
 import (
 	"context"

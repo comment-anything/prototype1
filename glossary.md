@@ -64,9 +64,9 @@ Directories are organizational units for files. Each directory contains files us
 | Name  | Description |
 | ----- |  ----------- |
 | `/database` | Contains go package `database` and migration files. |
+| `/database/generated/` | Generated `sqlc` code providing models, methods, and validators.
 | `/database/migration` | Contains database migrations to enable iterative schema changes to the database for use with the [`golang-migrate`](https://github.com/golang-migrate) command line tool.
 | `/database/query/` | SQL files describing queries that are read by [`sqlc`](https://docs.sqlc.dev/en/stable/) to generate go code.
-| `/database/sqlc/` | Generated `sqlc` code providing models, methods, and validators.
 | `/server/` | Contains go package `server`. |
 | `/static/` | Files served statically from the server, such as images, stylsheets, and front-end Javascript, to be used by html across the application.
 | `/templates/` | Files to be used with go html templates to render struct data. 
