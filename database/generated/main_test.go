@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/comment-anything/prototype1/util"
+	_ "github.com/lib/pq"
 )
 
 /*

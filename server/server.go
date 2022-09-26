@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/comment-anything/prototype1/database"
 	"github.com/comment-anything/prototype1/templates"
 	"github.com/comment-anything/prototype1/util"
 	"github.com/gorilla/mux"
@@ -13,12 +14,14 @@ import (
 // Server holds the server state including routes and provides methods for server operations.
 type Server struct {
 	router *mux.Router
+	db     database.Store
 }
 
 // New returns a new Server instance with routing applied.
 func New() (*Server, error) {
 	server := &Server{}
 	server.setupRouter()
+	server.db = database.New()
 	return server, nil
 }
 
@@ -45,6 +48,8 @@ func (s *Server) setupRouter() {
 
 // Start causes the server to begin listening on the configured port.
 func (s *Server) Start() {
+	s.db.Connect()
+	fmt.Println(" Database connection initialized.")
 	port := util.Config.Server.Port
 	fmt.Println(" Server listening on port", port)
 	log.Println(http.ListenAndServe(port, s.router))

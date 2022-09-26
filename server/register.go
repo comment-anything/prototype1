@@ -1,8 +1,10 @@
 package server
 
 import (
+	"context"
 	"net/http"
 
+	"github.com/comment-anything/prototype1/database/generated"
 	"github.com/comment-anything/prototype1/templates"
 )
 
@@ -33,12 +35,21 @@ func (s *Server) PostRegister(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("Password")
 	retypePassword := r.FormValue("Password2")
 	valid, errmsgs := validateRegSubmission(username, password, retypePassword, email)
-	_ = errmsgs
 	if !valid {
 		templates.RegisterView.Execute(w, &registerValidationError{ErrorStrings: errmsgs})
 		return
 	} else {
-		http.Error(w, "Oh yes!", 404)
+		user_exists := s.checkIfUserExists(username)
+		if user_exists {
+			templates.RegisterView.Execute(w, &registerValidationError{ErrorStrings: []string{"That username is taken."}})
+		} else {
+			user, err := s.createUser(username, password, email)
+			if err != nil {
+				templates.RegisterView.Execute(w, &registerValidationError{ErrorStrings: []string{err.Error()}})
+			} else {
+				templates.DashboardView.Execute(w, user)
+			}
+		}
 		return
 	}
 }
@@ -103,4 +114,24 @@ func encryptPassword(unencrypted_password string) string {
 // decryptPassword decrypts a password from storage.
 func decryptPassword(encrypted_password string) string {
 	return encrypted_password
+}
+
+func (s *Server) checkIfUserExists(username string) bool {
+	ctx := context.TODO()
+	_, err := s.db.Queries.GetUserByUserName(ctx, username)
+	if err == nil {
+		return true
+	} else {
+		return false
+	}
+}
+
+func (s *Server) createUser(username string, password string, email string) (generated.User, error) {
+	ctx := context.TODO()
+	params := generated.CreateUserParams{
+		Username: username,
+		Password: password,
+		Email:    email,
+	}
+	return s.db.Queries.CreateUser(ctx, params)
 }

@@ -1,0 +1,10 @@
+{{ define "title"}}
+Dashboard
+{{ end }}
+
+{{define "body"}}
+<div class="usertab">
+    <span>Logged in as: <span id="Username">{{.Username}}</span> &nbsp;&nbsp;</span>
+    <span><a href="/logout">Log out</a></span>
+</div>
+{{end}}

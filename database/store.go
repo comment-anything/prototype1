@@ -6,6 +6,7 @@ import (
 
 	"github.com/comment-anything/prototype1/database/generated"
 	"github.com/comment-anything/prototype1/util"
+	_ "github.com/lib/pq"
 )
 
 type Store struct {
@@ -30,7 +31,7 @@ func NewConnect() Store {
 func (s *Store) Connect() {
 	postgres, err := sql.Open("postgres", util.Config.DB.ConnectString())
 	if err != nil {
-		fmt.Println(" Error connecting to postgres. Check your credentials.")
+		fmt.Println(" Error connecting to postgres : ", err.Error())
 	} else {
 		s.db = postgres
 		s.Queries = generated.New(s.db)
