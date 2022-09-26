@@ -30,6 +30,7 @@ func StartServer() {
 	// Serve the static index page on root.
 	r.HandleFunc("/", IndexPath)
 	r.HandleFunc("/bad", InvalidPath)
+	r.HandleFunc("/register", RegisterHandler)
 
 	// Serve static assets like images and css.
 

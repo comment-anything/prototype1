@@ -17,6 +17,8 @@
    --compradius: 5px;
    --compshadowborderbottom: 5px solid rgb(61, 47, 47);
    --compshadowborderright: 5px solid rgb(65, 59, 59);
+   --formlabelcolor: #c8d4d4;
+
 }
 
 body {
@@ -56,4 +58,36 @@ a:visited:hover {
 h1 > a , h1 > a:visited{
     color: var(--compcolor);
     text-decoration: none;
+}
+
+form > div {
+    margin-bottom: 10px;
+}
+
+form > div > label {
+    display: inline-block;
+    width: 40%;
+    text-align: right;
+    color: var(--formlabelcolor)
+}
+
+form > div > input[type=submit] {
+    padding: 12px;
+    font-family: var(--mainfont);
+    font-size: 20px;
+    margin-top: 10px;
+    background-color: var(--linkcolor);
+}
+
+form > div > input[type=submit]:hover {
+    padding: 12px;
+    font-family: var(--mainfont);
+    font-size: 20px;
+    margin-top: 10px;
+    background-color: var(--linkhover);
+}
+
+.error-message {
+    text-align: center;
+    color: red;
 }

@@ -1,3 +1,6 @@
+{{define "title"}}
+Register
+{{end}}
 
 {{ define "body" }}
 <form method="POST">
@@ -7,19 +10,25 @@
     </div>
     <div>
         <label for="username">Username</label>
-        <input type="text" id="username" name="Username">
+        <input type="text" id="username" name="Username" placeholder="Displayed name">
     </div>
     <div>
         <label for="password">Password</label>
-        <input type="password" id="password" name="Password">
+        <input type="password" id="password" name="Password" placeholder="password">
     </div>
     <div>
         <label for="password">Retype Password</label>
-        <input type="password" id="password" name="Password2">
+        <input type="password" id="password" name="Password2" placeholder="password">
     </div>
-    <input type="submit" name="submit" value="Register">
+    <div style="text-align:center;">
+        <input type="submit" name="submit" value="Register">
+    </div>
 </form>
-{{ if .ErrorString }}
-<div style="color:darkred;">{{ .ErrorString }}</div>
+{{ if .ErrorStrings }}
+    {{ with .ErrorStrings}}
+        {{ range .}}
+        <div class="error-message"> {{.}}</div>
+        {{ end}}
+    {{end}}
 {{ end }}
-{{ end }}
+{{end }}

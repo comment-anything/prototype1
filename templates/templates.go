@@ -7,6 +7,7 @@ import (
 
 var IndexView *template.Template
 var ErrorView *template.Template
+var RegisterView *template.Template
 
 //go:embed index.html
 var indexTemplate string
@@ -18,7 +19,7 @@ var errorTemplate string
 var userViewBase string
 
 //go:embed register.html
-var registerBase string
+var registerTemplate string
 
 //go:embed static/teststat.html
 var dateConv string
@@ -29,6 +30,7 @@ var baseTemplate string
 func init() {
 	ErrorView = getTemplate(errorTemplate)
 	IndexView = getTemplate(indexTemplate)
+	RegisterView = getTemplate(registerTemplate)
 }
 
 func getTemplate(pageTemplate string) *template.Template {
