@@ -70,6 +70,7 @@ Directories are organizational units for files. Each directory contains files us
 | `/server/` | Contains go package `server`. |
 | `/static/` | Files served statically from the server, such as images, stylsheets, and front-end Javascript, to be used by html across the application.
 | `/templates/` | Files to be used with go html templates to render struct data. 
+| `/util/` | Go code to accomplish msicellaneous self-contained tasks, including holding the configuration settings.
 | `/views` | Contains .html files to be served to a user. |
 
 ## Root Files
