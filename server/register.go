@@ -7,18 +7,18 @@ import (
 )
 
 // registerHandler determines whether the user is issuing an HTTP GET or an HTTP POST request and calls GetRegister or PostRegister respectively.
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		PostRegister(w, r)
+		s.PostRegister(w, r)
 	} else if r.Method == "GET" {
-		GetRegister(w, r)
+		s.GetRegister(w, r)
 	} else {
 		http.Error(w, "bad method", 404)
 	}
 }
 
 // getRegister is called when an HTTP GET request is received at the /register endpoint. It serves the registration page from a template.
-func GetRegister(w http.ResponseWriter, r *http.Request) {
+func (s *Server) GetRegister(w http.ResponseWriter, r *http.Request) {
 	templates.RegisterView.Execute(w, "")
 }
 
@@ -27,14 +27,14 @@ type registerValidationError struct {
 }
 
 // postRegister is called when an HTTP POST request is received at the /register endpoint. If the form data fails a registration check, the user is returned to the registration page. The template is populated with an error string accordingly.
-func PostRegister(w http.ResponseWriter, r *http.Request) {
+func (s *Server) PostRegister(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("Username")
 	email := r.FormValue("Email")
 	password := r.FormValue("Password")
 	retypePassword := r.FormValue("Password2")
 	valid, errmsgs := validateRegSubmission(username, password, retypePassword, email)
 	_ = errmsgs
-	if valid != true {
+	if !valid {
 		templates.RegisterView.Execute(w, &registerValidationError{ErrorStrings: errmsgs})
 		return
 	} else {
