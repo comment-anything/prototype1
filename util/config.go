@@ -5,19 +5,20 @@ Config holds values parsed from the .env file in project root. It is used across
 */
 
 import (
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 )
 
-// dbCredentials are stored in the global Config singleton as Config.db. They hold the connection settings for accessing the Postgres database.
+// dbCredentials are stored in the global Config singleton as Config.DB. It holds the connection settings for accessing the Postgres database.
 type dbCredentials struct {
-	host     string
-	port     string
-	user     string
-	password string
-	dbname   string
+	Host     string
+	Port     string
+	User     string
+	Password string
+	DBname   string
 }
 
 // serverConfig is stored in the global Config singleton as Config.server. It holds the connection settings for the server.
@@ -45,26 +46,31 @@ func init() {
 
 // loadDBEnv loads environment variables into the configuration struct. If it fails to load a variable, it terminates the program process. Correct environment variables are required for the server to run.
 func (c *config) loadDBEnv() {
-	c.DB.host = os.Getenv("DB_HOST")
-	if c.DB.host == "" {
+	c.DB.Host = os.Getenv("DB_HOST")
+	if c.DB.Host == "" {
 		badEnvTerminate("DB_HOST")
 	}
-	c.DB.port = os.Getenv("DB_HOST_PORT")
-	if c.DB.port == "" {
+	c.DB.Port = os.Getenv("DB_HOST_PORT")
+	if c.DB.Port == "" {
 		badEnvTerminate("DB_PORT")
 	}
-	c.DB.user = os.Getenv("DB_USER")
-	if c.DB.user == "" {
+	c.DB.User = os.Getenv("DB_USER")
+	if c.DB.User == "" {
 		badEnvTerminate("DB_USER")
 	}
-	c.DB.password = os.Getenv("DB_PASSWORD")
-	if c.DB.password == "" {
+	c.DB.Password = os.Getenv("DB_PASSWORD")
+	if c.DB.Password == "" {
 		badEnvTerminate("DB_PASSWORD")
 	}
-	c.DB.dbname = os.Getenv("DB_DATABASE_NAME")
-	if c.DB.dbname == "" {
+	c.DB.DBname = os.Getenv("DB_DATABASE_NAME")
+	if c.DB.DBname == "" {
 		badEnvTerminate("DB_DATABASE_NAME")
 	}
+}
+
+// DBString builds a string from the database connection credentials and returns it. For use with sql.Open.
+func (d *dbCredentials) ConnectString() string {
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", d.Host, d.Port, d.User, d.Password, d.DBname)
 }
 
 func (c *config) loadServerEnv() {
