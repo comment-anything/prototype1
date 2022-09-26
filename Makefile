@@ -45,4 +45,7 @@ dbshell:
 
 serve:
 	go run .
+
+testgenerated:
+	go test "./database/generated"
 	

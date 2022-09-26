@@ -35,8 +35,9 @@ type config struct {
 // Config is a global configuration object singleton holding environment variables and other global data.
 var Config config
 
-func init() {
-	err := godotenv.Load()
+// Load loads the environment variables from the .env file. It should be called in the main function and then in the TestMain function of every package that needs access to those environment variables. While main calls the function with a path to the current working directory, tests will have to use relative directories to find the .env file.
+func (c *config) Load(path string) {
+	err := godotenv.Load(path)
 	if err != nil {
 		log.Fatal("Error loading .env file. Ensure there is a well-formatted .env file in the root of the project. See https://github.com/joho/godotenv and the readme for more information.")
 	}

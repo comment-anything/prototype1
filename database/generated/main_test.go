@@ -23,6 +23,9 @@ var testQueries *Queries
 
 // TestMain is ran before all other tests in the generated package. It initializes the testDb and testQueries objects for use by other tests. It uses the values in util.Config to connect to the database; if the environment variables are not configured properly, the tests cannot run.
 func TestMain(m *testing.M) {
+
+	util.Config.Load("../../.env")
+
 	postgres, err := sql.Open("postgres", util.Config.DB.ConnectString())
 	if err != nil {
 		fmt.Println(" Couldn't run tests: Database failed to load.")
