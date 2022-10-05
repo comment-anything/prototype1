@@ -25,6 +25,7 @@ type dbCredentials struct {
 type serverConfig struct {
 	Port       string
 	DoesLogAll bool
+	JWTKey     string
 }
 
 type config struct {
@@ -88,6 +89,12 @@ func (c *config) loadServerEnv() {
 		c.Server.DoesLogAll = true
 	} else {
 		c.Server.DoesLogAll = false
+	}
+	jwtkey := os.Getenv("JWT_KEY")
+	if jwtkey == "" {
+		badEnvTerminate("JWT_KEY")
+	} else {
+		Config.Server.JWTKey = jwtkey
 	}
 }
 
