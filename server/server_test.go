@@ -13,7 +13,7 @@ func TestNew(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	//server.DB.Connect()
+	server.DB.Connect()
 	if server.DB.Queries == nil {
 		t.Errorf("Server DB failed to initialize. Ensure the testing database is running..")
 	}

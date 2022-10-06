@@ -13,8 +13,9 @@ import (
 
 // Server holds the server state including routes and provides methods for server operations.
 type Server struct {
-	router *mux.Router
-	DB     database.Store
+	router      *mux.Router
+	DB          database.Store
+	Controllers CManager
 }
 
 // New returns a new Server instance with routing applied.
@@ -22,6 +23,7 @@ func New() (*Server, error) {
 	server := &Server{}
 	server.setupRouter()
 	server.DB = database.New()
+	server.Controllers = NewCManager(server)
 	return server, nil
 }
 
@@ -64,6 +66,7 @@ func (s *Server) GetIndex(w http.ResponseWriter, r *http.Request) {
 	templates.IndexView.Execute(w, "")
 }
 
+// GetInvalidPath serves the 404 page
 func (s *Server) GetInvalidPath(w http.ResponseWriter, r *http.Request) {
 	templates.ErrorView.Execute(w, "")
 }
