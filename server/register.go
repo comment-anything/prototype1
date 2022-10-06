@@ -118,7 +118,7 @@ func decryptPassword(encrypted_password string) string {
 
 func (s *Server) checkIfUserExists(username string) bool {
 	ctx := context.TODO()
-	_, err := s.db.Queries.GetUserByUserName(ctx, username)
+	_, err := s.DB.Queries.GetUserByUserName(ctx, username)
 	if err == nil {
 		return true
 	} else {
@@ -133,5 +133,5 @@ func (s *Server) createUser(username string, password string, email string) (gen
 		Password: password,
 		Email:    email,
 	}
-	return s.db.Queries.CreateUser(ctx, params)
+	return s.DB.Queries.CreateUser(ctx, params)
 }

@@ -45,7 +45,11 @@ dbshell:
 
 serve:
 	go run .
-
-testgenerated:
-	go test "./database/generated"
 	
+test_server:
+	go test ./server -cover 
+
+test_generated:
+	go test ./database/generated -cover
+
+
