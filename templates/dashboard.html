@@ -3,8 +3,18 @@ Dashboard
 {{ end }}
 
 {{define "body"}}
+
 <div class="usertab">
-    <span>Logged in as: <span id="Username">{{.Username}}</span> &nbsp;&nbsp;</span>
+    <span>Logged in as: <span id="Username">{{.User.Username}}</span> &nbsp;&nbsp;</span>
     <span><a href="/logout">Log out</a></span>
 </div>
+
+Todo... set up these templates better so the login/logout user thing is on all pages!
+
+<p><a href="/auth/settings">Settings</a></p>
+<p>User created at....</p>
+<p>Number of comments....</p>
+<p>Awards....</p>
+<p>Detailed Stats...</p>
+
 {{end}}

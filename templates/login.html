@@ -1,0 +1,26 @@
+{{ define "title"}}
+Login
+{{ end }}
+
+{{define "body"}}
+<form method="POST">
+    <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="Username" placeholder="Username">
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="Password" placeholder="password">
+    </div>
+    <div style="text-align:center;">
+        <input type="submit" name="submit" value="Log In">
+    </div>
+</form>
+{{ if .ErrorStrings }}
+    {{ with .ErrorStrings}}
+        {{ range .}}
+        <div class="error-message"> {{.}}</div>
+        {{ end}}
+    {{end}}
+{{ end }}
+{{end}}

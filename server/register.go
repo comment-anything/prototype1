@@ -47,6 +47,8 @@ func (s *Server) PostRegister(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				templates.RegisterView.Execute(w, &registerValidationError{ErrorStrings: []string{err.Error()}})
 			} else {
+				// right here... we need to do what we need to do with controllers and cookies
+				// let's just go ahead and create the token from the user ID and write it right to the cookie
 				templates.DashboardView.Execute(w, user)
 			}
 		}

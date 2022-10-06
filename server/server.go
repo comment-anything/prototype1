@@ -42,6 +42,9 @@ func (s *Server) setupRouter() {
 	// Serve register page.
 	r.HandleFunc("/register", s.RegisterHandler)
 
+	r.HandleFunc("/login", s.GetLogin).Methods(http.MethodGet)
+	r.HandleFunc("/login", s.PostLogin).Methods(http.MethodPost)
+
 	// TODO: Wrap some component of the mux router with the logging function.
 	s.router = r
 }
