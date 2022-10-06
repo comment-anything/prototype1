@@ -10,6 +10,15 @@
     </head>
     <body>
         <h1><a href="./">Prototype1 - {{block "title" . }}{{end}}</a></h1>
+        <section class="usertab">
+        {{ if and . .User}} 
+                <span>Logged in as: <span id="Username">{{.User.Username}}</span> &nbsp;&nbsp;</span>
+                <span><a href="/logout">Log out</a></span>
+        {{ else }}
+                <span><a href="/login">Log in</a></span>
+        {{ end }}
+        </section>
+            
         <section>
             {{block "body" .}}
             {{ end }}

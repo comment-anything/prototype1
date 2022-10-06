@@ -23,9 +23,10 @@ type dbCredentials struct {
 
 // serverConfig is stored in the global Config singleton as Config.server. It holds the connection settings for the server.
 type serverConfig struct {
-	Port       string
-	DoesLogAll bool
-	JWTKey     string
+	Port          string
+	DoesLogAll    bool
+	JWTKey        string
+	JWTCookieName string
 }
 
 type config struct {
@@ -95,6 +96,13 @@ func (c *config) loadServerEnv() {
 		badEnvTerminate("JWT_KEY")
 	} else {
 		Config.Server.JWTKey = jwtkey
+	}
+	cookie_name := os.Getenv("JWT_COOKIE_NAME")
+	if jwtkey == "" {
+		fmt.Println("No JWT_COOKIE_NAME in .env. Defaulting to 'canywauth'")
+		Config.Server.JWTCookieName = "canywauth"
+	} else {
+		Config.Server.JWTKey = cookie_name
 	}
 }
 

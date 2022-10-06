@@ -39,11 +39,14 @@ func (s *Server) PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// generate controller
-	// generate cookie
-	// set the cookie on the header
+	controller, err := s.Controllers.Controller(user.ID)
+	if err != nil {
+		GetErrPg(w, r, err.Error(), "Couldn't generate controller")
+		return
+	}
+	controller.RefreshAuthCookie(w)
 
-	templates.DashboardView.Execute(w, nil)
+	templates.DashboardView.Execute(w, controller)
 
 	// currently serving dashboard, but probably should redirect to auth route to get user the right URL in header, have auth validate the token that was just generated
 

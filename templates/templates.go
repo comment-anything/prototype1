@@ -10,6 +10,7 @@ var ErrorView *template.Template
 var RegisterView *template.Template
 var DashboardView *template.Template
 var LoginView *template.Template
+var DebugView *template.Template
 
 //go:embed index.html
 var indexTemplate string
@@ -22,6 +23,9 @@ var dashboardTemplate string
 
 //go:embed login.html
 var loginTemplate string
+
+//go:embed debug.html
+var debugTemplate string
 
 //go:embed user.html
 var userViewBase string
@@ -41,6 +45,7 @@ func init() {
 	RegisterView = getTemplate(registerTemplate)
 	DashboardView = getTemplate(dashboardTemplate)
 	LoginView = getTemplate(loginTemplate)
+	DebugView = getTemplate(debugTemplate)
 }
 
 func getTemplate(pageTemplate string) *template.Template {

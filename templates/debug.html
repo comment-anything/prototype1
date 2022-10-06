@@ -1,0 +1,15 @@
+{{define "title"}}
+Detailed Error Message
+{{ end }}
+
+{{define "body"}}
+<p>This is a detailed error page which should not be used in production code.</p>
+    {{ if .ErrorStrings }}
+            {{ with .ErrorStrings}}
+                {{ range .}}
+                    <div class="error-message"> {{.}}</div>
+                {{ end}}
+            {{end}}
+    {{ end }}
+
+{{ end }}
