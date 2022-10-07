@@ -12,6 +12,7 @@ var RegisterView *template.Template
 var DashboardView *template.Template
 var LoginView *template.Template
 var DebugView *template.Template
+var CommentsView *template.Template
 
 //go:embed index.html
 var indexTemplate string
@@ -31,11 +32,11 @@ var debugTemplate string
 //go:embed user.html
 var userViewBase string
 
+//go:embed comments.html
+var commentsTemplate string
+
 //go:embed register.html
 var registerTemplate string
-
-//go:embed static/teststat.html
-var dateConv string
 
 //go:embed base.html
 var baseTemplate string
@@ -47,6 +48,8 @@ func init() {
 	DashboardView = getTemplate(dashboardTemplate)
 	LoginView = getTemplate(loginTemplate)
 	DebugView = getTemplate(debugTemplate)
+	CommentsView = getTemplate(commentsTemplate)
+
 }
 
 func getTemplate(pageTemplate string) *template.Template {

@@ -13,7 +13,7 @@
 
         <section class="usertab">
                 {{if hasField . "User"}}
-                Logged in as {{.User.Username}}. <a href="/logout">Log out</a>
+                Logged in as {{.User.Username}}. <a href="/logout">Log out</a> | <a href="/authed/dash">Dash</a>
                 {{else}}
                 <a href="/login">Log in</a>
                 {{end}}

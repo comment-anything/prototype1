@@ -1,0 +1,17 @@
+{{ define "title"}}
+Comments View
+{{ end }}
+
+{{define "body"}}
+
+<form method="POST">
+    <div>
+        <label for="url-request-input">URL:</label>
+        <input type="text" id="url-request-input" name="Url" placeholder="www.myurl.com" value={{if hasField . "Url"}}"{{.Url}}"{{else}}""{{end}}>
+    </div>
+    <div style="text-align:center;">
+        <input type="submit" name="submit" value="Get Comments">
+    </div>
+</form>
+
+{{end}}
