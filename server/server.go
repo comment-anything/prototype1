@@ -49,9 +49,14 @@ func (s *Server) setupRouter() {
 
 	r.HandleFunc("/login", s.GetLogin).Methods(http.MethodGet)
 	r.HandleFunc("/login", s.PostLogin).Methods(http.MethodPost)
-	// replace these with a mustauth subrouter
+	r.HandleFunc("/logout", s.GetLogout).Methods(http.MethodGet)
 
-	r.HandleFunc("/dash", s.GetDash).Methods(http.MethodGet)
+	// sub router for authed requests
+	authed := r.PathPrefix("/authed/").Subrouter()
+	authed.Use(s.MustAuth)
+
+	authed.HandleFunc("/dash", s.GetDash).Methods(http.MethodGet)
+	authed.HandleFunc("/", s.GetDash).Methods(http.MethodGet)
 
 	// TODO: Wrap some component of the mux router with the logging function.
 	s.router = r

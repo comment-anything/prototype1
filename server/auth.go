@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/comment-anything/prototype1/templates"
 	"github.com/comment-anything/prototype1/util"
 	"github.com/golang-jwt/jwt"
 )
@@ -80,6 +81,18 @@ func (s *Server) ReadsAuth(handler http.Handler) http.Handler {
 		controller.RefreshAuthCookie(w)
 		newctx := context.WithValue(r.Context(), CtxController, controller)
 		call_next_with_log(w, r.WithContext(newctx), "😂 Good cookie grab! Controller added!")
+	})
+}
+
+// MustAuth is Middleware for routes available only to a logged-in user. It serves an Error Page if no Controller is found in the Request, otherwise, it calls the handler.
+func (s *Server) MustAuth(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		maybe_controller := r.Context().Value(CtxController)
+		if maybe_controller == nil {
+			templates.ErrorView.Execute(w, "")
+			return
+		}
+		handler.ServeHTTP(w, r)
 	})
 }
 

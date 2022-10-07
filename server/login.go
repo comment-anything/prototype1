@@ -52,7 +52,7 @@ func (s *Server) PostLogin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(" ~ login post failed to refresh auth cookie; " + err.Error())
 	}
-	http.Redirect(w, r, "/dash", http.StatusFound)
+	http.Redirect(w, r, "/authed/dash", http.StatusFound)
 
 	//templates.DashboardView.Execute(w, controller)
 
