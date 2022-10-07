@@ -10,7 +10,7 @@ import (
 )
 
 type Store struct {
-	db      *sql.DB
+	DB      *sql.DB
 	Queries *generated.Queries
 }
 
@@ -33,14 +33,14 @@ func (s *Store) Connect() {
 	if err != nil {
 		fmt.Println(" Error connecting to postgres : ", err.Error())
 	} else {
-		s.db = postgres
-		s.Queries = generated.New(s.db)
+		s.DB = postgres
+		s.Queries = generated.New(s.DB)
 	}
 }
 
 // Disconnect disconnects a database from the Store and clears the Queries object.
 func (s *Store) Disconnect() {
-	s.db.Close()
+	s.DB.Close()
 	s.Queries = nil
 	fmt.Println(" Disconnected from Database.")
 }

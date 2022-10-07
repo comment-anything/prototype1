@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/comment-anything/prototype1/templates"
@@ -17,7 +18,9 @@ type LoginError struct {
 }
 
 func loginErr(ers ...string) LoginError {
-	return LoginError{ErrorStrings: ers}
+	var le LoginError
+	le.ErrorStrings = ers
+	return le
 }
 
 // PostLogin is called when an HTTP POST request is received at the /login endpoint. If the form data fails a registration check, the user is returned to the login page. The template is populated with an error string accordingly.
@@ -44,9 +47,14 @@ func (s *Server) PostLogin(w http.ResponseWriter, r *http.Request) {
 		GetErrPg(w, r, err.Error(), "Couldn't generate controller")
 		return
 	}
-	controller.RefreshAuthCookie(w)
 
-	templates.DashboardView.Execute(w, controller)
+	err = controller.RefreshAuthCookie(w)
+	if err != nil {
+		fmt.Println(" ~ login post failed to refresh auth cookie; " + err.Error())
+	}
+	http.Redirect(w, r, "/dash", http.StatusFound)
+
+	//templates.DashboardView.Execute(w, controller)
 
 	// currently serving dashboard, but probably should redirect to auth route to get user the right URL in header, have auth validate the token that was just generated
 

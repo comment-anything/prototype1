@@ -83,10 +83,10 @@ func (c *config) loadServerEnv() {
 	} else {
 		Config.Server.Port = ":" + port
 	}
-	log := os.Getenv("SERVER_LOG_ALL")
-	if log == "" {
+	logall := os.Getenv("SERVER_LOG_ALL")
+	if logall == "" {
 		badEnvTerminate("SERVER_LOG_ALL")
-	} else if log == "1" || log == "true" || log == "True" {
+	} else if logall == "1" || logall == "true" || logall == "True" {
 		c.Server.DoesLogAll = true
 	} else {
 		c.Server.DoesLogAll = false
@@ -98,11 +98,11 @@ func (c *config) loadServerEnv() {
 		Config.Server.JWTKey = jwtkey
 	}
 	cookie_name := os.Getenv("JWT_COOKIE_NAME")
-	if jwtkey == "" {
-		fmt.Println("No JWT_COOKIE_NAME in .env. Defaulting to 'canywauth'")
+	if cookie_name == "" {
+		log.Println("No JWT_COOKIE_NAME in .env. Defaulting to 'canywauth'")
 		Config.Server.JWTCookieName = "canywauth"
 	} else {
-		Config.Server.JWTKey = cookie_name
+		Config.Server.JWTCookieName = cookie_name
 	}
 }
 

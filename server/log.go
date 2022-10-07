@@ -6,19 +6,16 @@ package server
 import (
 	"log"
 	"net/http"
+
+	"github.com/comment-anything/prototype1/util"
 )
 
-type f func(w http.ResponseWriter, r *http.Request)
-
-func LogAllRequests(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Received a %s request for %v.", r.Method, r.URL)
-		handler.ServeHTTP(w, r)
-	})
-}
-
-func Log2(wrapped f) f {
-	return func(w http.ResponseWriter, r *http.Request) {
-		wrapped(w, r)
+func ConsoleLogRequests(handler http.Handler) http.Handler {
+	if util.Config.Server.DoesLogAll {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			log.Printf("Received a %s request with %v cookies for %v.\n", r.Method, len(r.Cookies()), r.URL)
+			handler.ServeHTTP(w, r)
+		})
 	}
+	return handler
 }

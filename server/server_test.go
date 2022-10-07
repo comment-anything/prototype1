@@ -14,8 +14,12 @@ func TestNew(t *testing.T) {
 		t.Fatal(err)
 	}
 	server.DB.Connect()
+	err = server.DB.DB.Ping()
+	if err != nil {
+		t.Errorf(err.Error())
+	}
 	if server.DB.Queries == nil {
-		t.Errorf("Server DB failed to initialize. Ensure the testing database is running..")
+		t.Errorf("Server Queries failed to initialize. Ensure the testing database is running..")
 	}
 
 }

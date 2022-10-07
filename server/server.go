@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -31,6 +32,8 @@ func New() (*Server, error) {
 func (s *Server) setupRouter() {
 	// Instantiate the gorilla/mux router.
 	r := mux.NewRouter()
+	r.Use(ConsoleLogRequests)
+	r.Use(s.ReadsAuth)
 
 	// Handle erroneous requests.
 	r.NotFoundHandler = http.HandlerFunc(s.GetInvalidPath)
@@ -46,6 +49,9 @@ func (s *Server) setupRouter() {
 
 	r.HandleFunc("/login", s.GetLogin).Methods(http.MethodGet)
 	r.HandleFunc("/login", s.PostLogin).Methods(http.MethodPost)
+	// replace these with a mustauth subrouter
+
+	r.HandleFunc("/dash", s.GetDash).Methods(http.MethodGet)
 
 	// TODO: Wrap some component of the mux router with the logging function.
 	s.router = r
@@ -63,10 +69,21 @@ func (s *Server) Start() {
 
 // GetIndex serves the home page in response to an http Request.
 func (s *Server) GetIndex(w http.ResponseWriter, r *http.Request) {
-	templates.IndexView.Execute(w, "")
+	TemplateWithController(templates.IndexView, w, r)
+	//templates.IndexView.Execute(w, "")
 }
 
 // GetInvalidPath serves the 404 page
 func (s *Server) GetInvalidPath(w http.ResponseWriter, r *http.Request) {
 	templates.ErrorView.Execute(w, "")
+}
+
+func TemplateWithController(tmplt *template.Template, w http.ResponseWriter, r *http.Request) {
+	maybe_controller := r.Context().Value(CtxController)
+	if maybe_controller != nil {
+		controller := maybe_controller.(*Controller)
+		tmplt.Execute(w, controller)
+	} else {
+		tmplt.Execute(w, "")
+	}
 }

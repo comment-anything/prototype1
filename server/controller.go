@@ -15,12 +15,19 @@ type Controller struct {
 	Manager          *CManager
 }
 
-func (c *Controller) RefreshAuthCookie(w http.ResponseWriter) {
-	tok, _ := GetToken(c.User.ID)
+func (c *Controller) RefreshAuthCookie(w http.ResponseWriter) error {
+	tok, err := GetToken(c.User.ID)
+	if err != nil {
+		return err
+	}
 	c.lastTokenRefresh = time.Now()
 	auth_cookie := http.Cookie{
-		Name:  util.Config.Server.JWTCookieName,
-		Value: tok,
+		Name:    util.Config.Server.JWTCookieName,
+		Value:   tok,
+		MaxAge:  0,
+		Path:    "/",
+		Expires: c.lastTokenRefresh.Add(60 * time.Minute),
 	}
 	http.SetCookie(w, &auth_cookie)
+	return nil
 }
