@@ -9,21 +9,6 @@ import (
 	"context"
 )
 
-const changeUserAccess = `-- name: ChangeUserAccess :exec
-UPDATE "Users" SET "access_level" = $2
-WHERE id = $1
-`
-
-type ChangeUserAccessParams struct {
-	ID          int64 `json:"id"`
-	AccessLevel int64 `json:"access_level"`
-}
-
-func (q *Queries) ChangeUserAccess(ctx context.Context, arg ChangeUserAccessParams) error {
-	_, err := q.db.ExecContext(ctx, changeUserAccess, arg.ID, arg.AccessLevel)
-	return err
-}
-
 const changeUserPassword = `-- name: ChangeUserPassword :exec
 UPDATE "Users" SET password = $2
 WHERE id = $1
@@ -43,27 +28,20 @@ const createUser = `-- name: CreateUser :one
 INSERT INTO "Users" (
     username,
     password,
-    email,
-    access_level
+    email
 ) VALUES (
-    $1, $2, $3, $4
-) RETURNING id, username, password, email, created_at, last_login, access_level
+    $1, $2, $3
+) RETURNING id, username, password, email, created_at, last_login, profile_blurb, banned
 `
 
 type CreateUserParams struct {
-	Username    string `json:"username"`
-	Password    string `json:"password"`
-	Email       string `json:"email"`
-	AccessLevel int64  `json:"access_level"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser,
-		arg.Username,
-		arg.Password,
-		arg.Email,
-		arg.AccessLevel,
-	)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.Password, arg.Email)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -72,7 +50,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Email,
 		&i.CreatedAt,
 		&i.LastLogin,
-		&i.AccessLevel,
+		&i.ProfileBlurb,
+		&i.Banned,
 	)
 	return i, err
 }
@@ -88,7 +67,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, username, password, email, created_at, last_login, access_level FROM "Users"
+SELECT id, username, password, email, created_at, last_login, profile_blurb, banned FROM "Users"
 WHERE "email" = $1 LIMIT 1
 `
 
@@ -102,13 +81,14 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.Email,
 		&i.CreatedAt,
 		&i.LastLogin,
-		&i.AccessLevel,
+		&i.ProfileBlurb,
+		&i.Banned,
 	)
 	return i, err
 }
 
 const getUserByUserId = `-- name: GetUserByUserId :one
-SELECT id, username, password, email, created_at, last_login, access_level FROM "Users"
+SELECT id, username, password, email, created_at, last_login, profile_blurb, banned FROM "Users"
 WHERE "id" = $1 LIMIT 1
 `
 
@@ -122,13 +102,14 @@ func (q *Queries) GetUserByUserId(ctx context.Context, id int64) (User, error) {
 		&i.Email,
 		&i.CreatedAt,
 		&i.LastLogin,
-		&i.AccessLevel,
+		&i.ProfileBlurb,
+		&i.Banned,
 	)
 	return i, err
 }
 
 const getUserByUserName = `-- name: GetUserByUserName :one
-SELECT id, username, password, email, created_at, last_login, access_level FROM "Users"
+SELECT id, username, password, email, created_at, last_login, profile_blurb, banned FROM "Users"
 WHERE "username" = $1 LIMIT 1
 `
 
@@ -142,13 +123,14 @@ func (q *Queries) GetUserByUserName(ctx context.Context, username string) (User,
 		&i.Email,
 		&i.CreatedAt,
 		&i.LastLogin,
-		&i.AccessLevel,
+		&i.ProfileBlurb,
+		&i.Banned,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, username, password, email, created_at, last_login, access_level FROM "Users"
+SELECT id, username, password, email, created_at, last_login, profile_blurb, banned FROM "Users"
 ORDER BY "username"
 `
 
@@ -168,7 +150,8 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.Email,
 			&i.CreatedAt,
 			&i.LastLogin,
-			&i.AccessLevel,
+			&i.ProfileBlurb,
+			&i.Banned,
 		); err != nil {
 			return nil, err
 		}

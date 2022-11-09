@@ -12,10 +12,9 @@ import (
 
 func TestCreateUser(t *testing.T) {
 	arg := CreateUserParams{
-		Username:    "klm123",
-		Password:    "1xtdf",
-		Email:       "7@7.com",
-		AccessLevel: 3,
+		Username: "klm123",
+		Password: "1xtdf",
+		Email:    "7@7.com",
 	}
 	var user User
 	user, err := testQueries.CreateUser(context.Background(), arg)

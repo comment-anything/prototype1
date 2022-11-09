@@ -2,10 +2,9 @@
 INSERT INTO "Users" (
     username,
     password,
-    email,
-    access_level
+    email
 ) VALUES (
-    $1, $2, $3, $4
+    $1, $2, $3
 ) RETURNING *;
 
 
@@ -27,10 +26,6 @@ ORDER BY "username";
 
 -- name: ChangeUserPassword :exec
 UPDATE "Users" SET password = $2
-WHERE id = $1;
-
--- name: ChangeUserAccess :exec
-UPDATE "Users" SET "access_level" = $2
 WHERE id = $1;
 
 -- name: DeleteUser :exec

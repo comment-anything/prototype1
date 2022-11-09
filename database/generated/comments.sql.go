@@ -15,17 +15,15 @@ INSERT INTO "Comments" (
     pathid,
     author,
     content,
-    response_type,
     parent
-) VALUES ($1, $2, $3, $4, $5)
+) VALUES ($1, $2, $3, $4)
 `
 
 type CreateCommentParams struct {
-	Pathid       int64         `json:"pathid"`
-	Author       int64         `json:"author"`
-	Content      string        `json:"content"`
-	ResponseType int64         `json:"response_type"`
-	Parent       sql.NullInt64 `json:"parent"`
+	Pathid  int64         `json:"pathid"`
+	Author  int64         `json:"author"`
+	Content string        `json:"content"`
+	Parent  sql.NullInt64 `json:"parent"`
 }
 
 func (q *Queries) CreateComment(ctx context.Context, arg CreateCommentParams) error {
@@ -33,7 +31,6 @@ func (q *Queries) CreateComment(ctx context.Context, arg CreateCommentParams) er
 		arg.Pathid,
 		arg.Author,
 		arg.Content,
-		arg.ResponseType,
 		arg.Parent,
 	)
 	return err

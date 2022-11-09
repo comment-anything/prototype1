@@ -5,7 +5,8 @@ CREATE TABLE "Users" (
   "email" varchar UNIQUE NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "last_login" timestamptz NOT NULL DEFAULT (now()),
-  "access_level" int8 NOT NULL DEFAULT 0
+  "profile_blurb" varchar,
+  "banned" boolean
 );
 
 CREATE TABLE "DomainBans" (
@@ -20,12 +21,18 @@ CREATE TABLE "Comments" (
   "pathid" bigint NOT NULL,
   "author" bigint NOT NULL,
   "content" varchar NOT NULL,
-  "response_type" int8 NOT NULL DEFAULT 0,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "parent" bigint,
   "hidden" boolean DEFAULT false,
-  "hidden_by" bigint,
-  "hidden_at" timestamptz
+  "removed" boolean DEFAULT false
+);
+
+CREATE TABLE "VoteRecord" (
+  "commentId" bigint,
+  "category" varchar,
+  "userId" bigint,
+  "value" int8,
+  PRIMARY KEY ("commentId", "category")
 );
 
 CREATE TABLE "Domains" (
@@ -38,18 +45,17 @@ CREATE TABLE "Paths" (
   "path" varchar
 );
 
-CREATE TABLE "Moderators" (
-  "id" bigserial PRIMARY KEY,
+CREATE TABLE "DomainModerators" (
+  "id" bigint,
   "domain" varchar NOT NULL,
   "user" bigint NOT NULL,
-  "level" int8 NOT NULL DEFAULT 1,
   "granted_at" timestamptz NOT NULL DEFAULT (now()),
   "granted_by" bigint NOT NULL
 );
 
 CREATE TABLE "GlobalModerators" (
-  "id" bigserial PRIMARY KEY,
-  "user" bigint,
+  "id" bigint,
+  "user" bigint PRIMARY KEY,
   "granted_at" timestamptz NOT NULL DEFAULT (now()),
   "granted_by" bigint NOT NULL
 );
@@ -59,16 +65,40 @@ CREATE TABLE "Admins" (
   "user" bigint
 );
 
-CREATE TABLE "RemovedComments" (
+CREATE TABLE "Logs" (
   "id" bigserial PRIMARY KEY,
-  "pathid" bigint NOT NULL,
-  "author" bigint NOT NULL,
-  "content" varchar NOT NULL,
-  "response_type" int8 NOT NULL DEFAULT 0,
-  "created_at" timestamptz NOT NULL,
-  "parent" bigint,
-  "removed_at" timestamptz NOT NULL DEFAULT (now()),
-  "removed_by" bigint NOT NULL
+  "user" bigint,
+  "ip" varchar,
+  "url" varchar
+);
+
+CREATE TABLE "CommentModerationActions" (
+  "id" bigserial PRIMARY KEY,
+  "taken_by" bigint,
+  "commentId" bigint,
+  "reason" varchar,
+  "taken_on" timestamptz,
+  "set_hidden_to" boolean,
+  "set_removed_to" boolean,
+  "associated_report" bigint
+);
+
+CREATE TABLE "BanActions" (
+  "id" bigserial PRIMARY KEY,
+  "taken_by" bigint,
+  "target_user" bigint,
+  "reason" varchar,
+  "taken_on" timestamptz,
+  "domain" varchar,
+  "set_banned_to" boolean
+);
+
+CREATE TABLE "Reports" (
+  "id" bigserial PRIMARY KEY,
+  "reporting_user" bigint,
+  "comment" bigint,
+  "reason" varchar,
+  "action_taken" boolean
 );
 
 CREATE INDEX ON "Users" ("username");
@@ -87,35 +117,25 @@ CREATE INDEX ON "Comments" ("pathid");
 
 CREATE UNIQUE INDEX ON "Paths" ("domain", "path");
 
-CREATE INDEX ON "RemovedComments" ("author");
-
 COMMENT ON COLUMN "Users"."password" IS 'Must be encrypted';
 
-COMMENT ON COLUMN "Comments"."response_type" IS 'e.g, joke, fact, diatribe, opinion';
-
-COMMENT ON COLUMN "RemovedComments"."response_type" IS 'e.g, joke, fact, diatribe, opinion';
-
 ALTER TABLE "DomainBans" ADD FOREIGN KEY ("user") REFERENCES "Users" ("id");
-
-ALTER TABLE "DomainBans" ADD FOREIGN KEY ("banned_from") REFERENCES "Domains" ("id");
-
-ALTER TABLE "DomainBans" ADD FOREIGN KEY ("banned_by") REFERENCES "Users" ("id");
 
 ALTER TABLE "Comments" ADD FOREIGN KEY ("pathid") REFERENCES "Paths" ("id");
 
 ALTER TABLE "Comments" ADD FOREIGN KEY ("author") REFERENCES "Users" ("id");
 
-ALTER TABLE "Comments" ADD FOREIGN KEY ("parent") REFERENCES "Comments" ("id");
+ALTER TABLE "VoteRecord" ADD FOREIGN KEY ("commentId") REFERENCES "Comments" ("id");
 
-ALTER TABLE "Comments" ADD FOREIGN KEY ("hidden_by") REFERENCES "Users" ("id");
+ALTER TABLE "VoteRecord" ADD FOREIGN KEY ("userId") REFERENCES "Users" ("id");
 
 ALTER TABLE "Paths" ADD FOREIGN KEY ("domain") REFERENCES "Domains" ("id");
 
-ALTER TABLE "Moderators" ADD FOREIGN KEY ("domain") REFERENCES "Domains" ("id");
+ALTER TABLE "DomainModerators" ADD FOREIGN KEY ("domain") REFERENCES "Domains" ("id");
 
-ALTER TABLE "Moderators" ADD FOREIGN KEY ("user") REFERENCES "Users" ("id");
+ALTER TABLE "DomainModerators" ADD FOREIGN KEY ("user") REFERENCES "Users" ("id");
 
-ALTER TABLE "Moderators" ADD FOREIGN KEY ("granted_by") REFERENCES "Users" ("id");
+ALTER TABLE "DomainModerators" ADD FOREIGN KEY ("granted_by") REFERENCES "Users" ("id");
 
 ALTER TABLE "GlobalModerators" ADD FOREIGN KEY ("user") REFERENCES "Users" ("id");
 
@@ -123,10 +143,20 @@ ALTER TABLE "GlobalModerators" ADD FOREIGN KEY ("granted_by") REFERENCES "Users"
 
 ALTER TABLE "Admins" ADD FOREIGN KEY ("user") REFERENCES "Users" ("id");
 
-ALTER TABLE "RemovedComments" ADD FOREIGN KEY ("pathid") REFERENCES "Paths" ("id");
+ALTER TABLE "Logs" ADD FOREIGN KEY ("user") REFERENCES "Users" ("id");
 
-ALTER TABLE "RemovedComments" ADD FOREIGN KEY ("author") REFERENCES "Users" ("id");
+ALTER TABLE "CommentModerationActions" ADD FOREIGN KEY ("taken_by") REFERENCES "Users" ("id");
 
-ALTER TABLE "RemovedComments" ADD FOREIGN KEY ("parent") REFERENCES "Comments" ("id");
+ALTER TABLE "CommentModerationActions" ADD FOREIGN KEY ("commentId") REFERENCES "Comments" ("id");
 
-ALTER TABLE "RemovedComments" ADD FOREIGN KEY ("removed_by") REFERENCES "Users" ("id");
+ALTER TABLE "CommentModerationActions" ADD FOREIGN KEY ("associated_report") REFERENCES "Reports" ("id");
+
+ALTER TABLE "BanActions" ADD FOREIGN KEY ("taken_by") REFERENCES "Users" ("id");
+
+ALTER TABLE "BanActions" ADD FOREIGN KEY ("target_user") REFERENCES "Users" ("id");
+
+ALTER TABLE "BanActions" ADD FOREIGN KEY ("domain") REFERENCES "Domains" ("id");
+
+ALTER TABLE "Reports" ADD FOREIGN KEY ("reporting_user") REFERENCES "Users" ("id");
+
+ALTER TABLE "Reports" ADD FOREIGN KEY ("comment") REFERENCES "Comments" ("id");
