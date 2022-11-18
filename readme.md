@@ -55,7 +55,7 @@ Docker allows the deployment of isolated container virtual machines. Both the Po
 
 If you are on Windows you will also need *make*. You can get make by installing [choclatey](https://chocolatey.org/install) and running `choco install make`.
 
-## Running
+## Building, Running
 
 Use the `make` commands to get other dependencies and run the servers.
 
@@ -73,6 +73,12 @@ And you can build the database tables.
 ```shell
 make createdb
 make migrateup
+```
+
+Finally, run the server. It will listen on the port configured in the .env file. If you used the example .Env file posted above, that's port 3000. After running the server, you can navigate to the url `localhost:3000` to access the test pages.
+
+```
+
 ```
 
 
