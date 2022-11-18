@@ -1,4 +1,4 @@
-package client
+package comm
 
 // Ban is dispatched when a moderator or administrator bans a user.
 type Ban struct {
