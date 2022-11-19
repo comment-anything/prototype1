@@ -1,4 +1,4 @@
-package comm
+package communication
 
 // AdminAccessLog contains data needed by Admins to see an access log.
 type AdminAccessLog struct {
@@ -57,7 +57,7 @@ type BanRecord struct {
 	setBannedTo bool
 }
 
-// CommentVote provides the data the Front End needs to render a comment.
+// Comment provides the data the Front End needs to render a comment.
 type Comment struct {
 
 	// a number corresponding to a unique user ID

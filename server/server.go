@@ -17,6 +17,7 @@ type Server struct {
 	router      *mux.Router
 	DB          database.Store
 	Controllers CManager
+	PageManager PageManager
 }
 
 // New returns a new Server instance with routing applied.

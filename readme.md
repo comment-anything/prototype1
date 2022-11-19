@@ -83,3 +83,15 @@ Finally, run the server. It will listen on the port configured in the .env file.
 
 
 
++ ChangeUserPassword(ctx context.Context, arg ChangeUserPasswordParams)
++ CreateComment(ctx context.Context, arg CreateCommentParams)
++ CreateDomain(ctx context.Context, id string)
++ CreatePath(ctx context.Context, arg CreatePathParams)
++ CreateUser(ctx context.Context, arg CreateUserParams) User
++ DeleteUser(ctx context.Context, id int64)
++ GetDomain(ctx context.Context, id string) string)
++ GetPath(ctx context.Context, arg GetPathParams) Path
++ GetUserByEmail(ctx context.Context, email string) User
++ GetUserByUserId(ctx context.Context, id int64) User
++ GetUserByUserName(ctx context.Context, username string) User
++ ListUsers(ctx context.Context)
