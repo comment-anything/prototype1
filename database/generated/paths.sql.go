@@ -50,8 +50,8 @@ func (q *Queries) GetDomain(ctx context.Context, id string) (string, error) {
 }
 
 const getPath = `-- name: GetPath :one
-SELECT id, domain, path FROM "Paths"
-WHERE "domain" = $1 and "path" = $2 LIMIT 1
+SELECT id FROM "Paths"
+WHERE "domain" = $1 and "path" = $2
 `
 
 type GetPathParams struct {
@@ -59,9 +59,9 @@ type GetPathParams struct {
 	Path   sql.NullString `json:"path"`
 }
 
-func (q *Queries) GetPath(ctx context.Context, arg GetPathParams) (Path, error) {
+func (q *Queries) GetPath(ctx context.Context, arg GetPathParams) (int64, error) {
 	row := q.db.QueryRowContext(ctx, getPath, arg.Domain, arg.Path)
-	var i Path
-	err := row.Scan(&i.ID, &i.Domain, &i.Path)
-	return i, err
+	var id int64
+	err := row.Scan(&id)
+	return id, err
 }

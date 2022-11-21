@@ -16,6 +16,12 @@ WHERE "id" = $1 LIMIT 1;
 SELECT * FROM "Users"
 WHERE "username" = $1 LIMIT 1;
 
+-- name: GetUserGlobalModeratorAssignment :one
+SELECT "Users".id, "GlobalModeratorAssignments".granted_at FROM "Users" INNER JOIN "GlobalModeratorAssignments" on "Users".id = "GlobalModeratorAssignments".user_id WHERE "Users".id = $1;
+
+-- name: GetUserDomainModeratorAssignments :many
+SELECT "Users".id, "DomainModeratorAssignments".granted_at, "DomainModeratorAssignments".domain FROM "Users" INNER JOIN "DomainModeratorAssignments" on "Users".id = "DomainModeratorAssignments".user_id WHERE "Users".id = $1;
+
 -- name: GetUserByEmail :one
 SELECT * FROM "Users"
 WHERE "email" = $1 LIMIT 1;
@@ -26,6 +32,10 @@ ORDER BY "username";
 
 -- name: ChangeUserPassword :exec
 UPDATE "Users" SET password = $2
+WHERE id = $1;
+
+-- name: ChangeUserEmail :exec
+UPDATE "Users" SET email = $2
 WHERE id = $1;
 
 -- name: DeleteUser :exec

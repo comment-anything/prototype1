@@ -9,19 +9,19 @@ import (
 	"time"
 )
 
-type Admin struct {
-	ID   int64         `json:"id"`
-	User sql.NullInt64 `json:"user"`
+type AdminAssignment struct {
+	ID     int64         `json:"id"`
+	UserID sql.NullInt64 `json:"user_id"`
 }
 
 type BanAction struct {
-	ID          int64          `json:"id"`
-	TakenBy     sql.NullInt64  `json:"taken_by"`
-	TargetUser  sql.NullInt64  `json:"target_user"`
-	Reason      sql.NullString `json:"reason"`
-	TakenOn     sql.NullTime   `json:"taken_on"`
-	Domain      sql.NullString `json:"domain"`
-	SetBannedTo sql.NullBool   `json:"set_banned_to"`
+	ID           int64          `json:"id"`
+	TakenBy      sql.NullInt64  `json:"taken_by"`
+	TargetUserID sql.NullInt64  `json:"target_user_id"`
+	Reason       sql.NullString `json:"reason"`
+	TakenOn      sql.NullTime   `json:"taken_on"`
+	Domain       sql.NullString `json:"domain"`
+	SetBannedTo  sql.NullBool   `json:"set_banned_to"`
 }
 
 type Comment struct {
@@ -38,7 +38,7 @@ type Comment struct {
 type CommentModerationAction struct {
 	ID               int64          `json:"id"`
 	TakenBy          sql.NullInt64  `json:"taken_by"`
-	CommentId        sql.NullInt64  `json:"commentId"`
+	CommentID        sql.NullInt64  `json:"comment_id"`
 	Reason           sql.NullString `json:"reason"`
 	TakenOn          sql.NullTime   `json:"taken_on"`
 	SetHiddenTo      sql.NullBool   `json:"set_hidden_to"`
@@ -51,32 +51,32 @@ type Domain struct {
 }
 
 type DomainBan struct {
-	User       sql.NullInt64  `json:"user"`
+	UserID     sql.NullInt64  `json:"user_id"`
 	BannedFrom sql.NullString `json:"banned_from"`
 	BannedBy   sql.NullInt64  `json:"banned_by"`
 	BannedAt   time.Time      `json:"banned_at"`
 }
 
-type DomainModerator struct {
-	ID        sql.NullInt64 `json:"id"`
-	Domain    string        `json:"domain"`
-	User      int64         `json:"user"`
-	GrantedAt time.Time     `json:"granted_at"`
-	GrantedBy int64         `json:"granted_by"`
+type DomainModeratorAssignment struct {
+	ID        int64     `json:"id"`
+	Domain    string    `json:"domain"`
+	UserID    int64     `json:"user_id"`
+	GrantedAt time.Time `json:"granted_at"`
+	GrantedBy int64     `json:"granted_by"`
 }
 
-type GlobalModerator struct {
-	ID        sql.NullInt64 `json:"id"`
-	User      int64         `json:"user"`
+type GlobalModeratorAssignment struct {
+	ID        int64         `json:"id"`
+	UserID    sql.NullInt64 `json:"user_id"`
 	GrantedAt time.Time     `json:"granted_at"`
 	GrantedBy int64         `json:"granted_by"`
 }
 
 type Log struct {
-	ID   int64          `json:"id"`
-	User sql.NullInt64  `json:"user"`
-	Ip   sql.NullString `json:"ip"`
-	Url  sql.NullString `json:"url"`
+	ID     int64          `json:"id"`
+	UserID sql.NullInt64  `json:"user_id"`
+	Ip     sql.NullString `json:"ip"`
+	Url    sql.NullString `json:"url"`
 }
 
 type Path struct {
@@ -86,11 +86,11 @@ type Path struct {
 }
 
 type Report struct {
-	ID            int64          `json:"id"`
-	ReportingUser sql.NullInt64  `json:"reporting_user"`
-	Comment       sql.NullInt64  `json:"comment"`
-	Reason        sql.NullString `json:"reason"`
-	ActionTaken   sql.NullBool   `json:"action_taken"`
+	ID              int64          `json:"id"`
+	ReportingUserID sql.NullInt64  `json:"reporting_user_id"`
+	Comment         sql.NullInt64  `json:"comment"`
+	Reason          sql.NullString `json:"reason"`
+	ActionTaken     sql.NullBool   `json:"action_taken"`
 }
 
 type User struct {
@@ -106,8 +106,8 @@ type User struct {
 }
 
 type VoteRecord struct {
-	CommentId int64         `json:"commentId"`
+	CommentID int64         `json:"comment_id"`
 	Category  string        `json:"category"`
-	UserId    sql.NullInt64 `json:"userId"`
+	UserID    sql.NullInt64 `json:"user_id"`
 	Value     sql.NullInt64 `json:"value"`
 }

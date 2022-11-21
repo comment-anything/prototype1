@@ -7,7 +7,23 @@ package generated
 
 import (
 	"context"
+	"time"
 )
+
+const changeUserEmail = `-- name: ChangeUserEmail :exec
+UPDATE "Users" SET email = $2
+WHERE id = $1
+`
+
+type ChangeUserEmailParams struct {
+	ID    int64  `json:"id"`
+	Email string `json:"email"`
+}
+
+func (q *Queries) ChangeUserEmail(ctx context.Context, arg ChangeUserEmailParams) error {
+	_, err := q.db.ExecContext(ctx, changeUserEmail, arg.ID, arg.Email)
+	return err
+}
 
 const changeUserPassword = `-- name: ChangeUserPassword :exec
 UPDATE "Users" SET password = $2
@@ -126,6 +142,55 @@ func (q *Queries) GetUserByUserName(ctx context.Context, username string) (User,
 		&i.ProfileBlurb,
 		&i.Banned,
 	)
+	return i, err
+}
+
+const getUserDomainModeratorAssignments = `-- name: GetUserDomainModeratorAssignments :many
+SELECT "Users".id, "DomainModeratorAssignments".granted_at, "DomainModeratorAssignments".domain FROM "Users" INNER JOIN "DomainModeratorAssignments" on "Users".id = "DomainModeratorAssignments".user_id WHERE "Users".id = $1
+`
+
+type GetUserDomainModeratorAssignmentsRow struct {
+	ID        int64     `json:"id"`
+	GrantedAt time.Time `json:"granted_at"`
+	Domain    string    `json:"domain"`
+}
+
+func (q *Queries) GetUserDomainModeratorAssignments(ctx context.Context, id int64) ([]GetUserDomainModeratorAssignmentsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getUserDomainModeratorAssignments, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserDomainModeratorAssignmentsRow
+	for rows.Next() {
+		var i GetUserDomainModeratorAssignmentsRow
+		if err := rows.Scan(&i.ID, &i.GrantedAt, &i.Domain); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGlobalModeratorAssignment = `-- name: GetUserGlobalModeratorAssignment :one
+SELECT "Users".id, "GlobalModeratorAssignments".granted_at FROM "Users" INNER JOIN "GlobalModeratorAssignments" on "Users".id = "GlobalModeratorAssignments".user_id WHERE "Users".id = $1
+`
+
+type GetUserGlobalModeratorAssignmentRow struct {
+	ID        int64     `json:"id"`
+	GrantedAt time.Time `json:"granted_at"`
+}
+
+func (q *Queries) GetUserGlobalModeratorAssignment(ctx context.Context, id int64) (GetUserGlobalModeratorAssignmentRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserGlobalModeratorAssignment, id)
+	var i GetUserGlobalModeratorAssignmentRow
+	err := row.Scan(&i.ID, &i.GrantedAt)
 	return i, err
 }
 
