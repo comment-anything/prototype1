@@ -210,6 +210,12 @@ type LoginResponse struct {
 	loggedInAs UserProfile
 }
 
+// Message is a general communication entity used to provide feedback to a client that some action has completed (or not completed) on requests where the client has not asked for any particular data.
+type Message struct {
+	success bool
+	text    string
+}
+
 // ModerationRecord contains data the Front End needs to render a ModerationRecord, which is a record of a moderator action, such as hiding or removing a comment.
 type ModerationRecord struct {
 

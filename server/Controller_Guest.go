@@ -43,6 +43,10 @@ func (c *GuestController) HandleCommandRequestValidation(msg *communication.Requ
 func (c *GuestController) HandleCommandValidate(msg *communication.Validate, server *Server) {}
 func (c *GuestController) HandleCommandViewBans(msg *communication.ViewBans, server *Server) {}
 func (c *GuestController) HandleCommandViewLogs(msg *communication.ViewLogs, server *Server) {}
+func (c *GuestController) HandleCommandViewDomainReport(msg *communication.ViewDomainReport, server *Server) {
+}
+func (c *GuestController) HandleCommandViewUsersReport(msg *communication.ViewUsersReport, server *Server) {
+}
 func (c *GuestController) HandleCommandViewModRecords(msg *communication.ViewModRecords, server *Server) {
 }
 func (c *GuestController) HandleCommandViewMods(msg *communication.ViewMods, server *Server) {}

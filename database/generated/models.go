@@ -101,6 +101,13 @@ type Log struct {
 	Url  sql.NullString `json:"url"`
 }
 
+type PasswordResetCode struct {
+	ID         int64          `json:"id"`
+	UserID     sql.NullInt64  `json:"user_id"`
+	VerifyCode sql.NullString `json:"verify_code"`
+	CreatedOn  time.Time      `json:"created_on"`
+}
+
 type Path struct {
 	ID     int64          `json:"id"`
 	Domain sql.NullString `json:"domain"`

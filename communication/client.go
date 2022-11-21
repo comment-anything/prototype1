@@ -160,6 +160,15 @@ type ViewBans struct {
 type ViewCommentReports struct {
 }
 
+// ViewDomainReport is dispatched to the server when an admin requests a report on a domain.
+type ViewDomainReport struct {
+	domain string
+}
+
+// ViewUsersReport is dispatched to the server when an admin requests a report on the overall users of comment anywhere.
+type ViewUsersReport struct {
+}
+
 // ViewFeedback is dispatched to the Server when an admin wishes to view feedback submitted by users of Comment Anywhere.
 type ViewFeedback struct {
 	// A time indicating the lower bound of feedback submission times.

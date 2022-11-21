@@ -27,6 +27,8 @@ type UserControllerInterface interface {
 	HandleCommandRequestValidation(*communication.RequestValidation, *Server)
 	HandleCommandValidate(*communication.Validate, *Server)
 	HandleCommandViewBans(*communication.ViewBans, *Server)
+	HandleCommandViewDomainReport(*communication.ViewDomainReport, *Server)
+	HandleCommandViewUsersReport(*communication.ViewUsersReport, *Server)
 	HandleCommandViewLogs(*communication.ViewLogs, *Server)
 	HandleCommandViewModRecords(*communication.ViewModRecords, *Server)
 	HandleCommandViewMods(*communication.ViewMods, *Server)
