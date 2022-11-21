@@ -17,10 +17,10 @@ SELECT * FROM "Users"
 WHERE "username" = $1 LIMIT 1;
 
 -- name: GetUserGlobalModeratorAssignment :one
-SELECT "Users".id, "GlobalModeratorAssignments".granted_at FROM "Users" INNER JOIN "GlobalModeratorAssignments" on "Users".id = "GlobalModeratorAssignments".user_id WHERE "Users".id = $1;
+SELECT "Users".id, "GlobalModeratorAssignments".assigned_at FROM "Users" INNER JOIN "GlobalModeratorAssignments" on "Users".id = "GlobalModeratorAssignments".user_id WHERE "Users".id = $1;
 
 -- name: GetUserDomainModeratorAssignments :many
-SELECT "Users".id, "DomainModeratorAssignments".granted_at, "DomainModeratorAssignments".domain FROM "Users" INNER JOIN "DomainModeratorAssignments" on "Users".id = "DomainModeratorAssignments".user_id WHERE "Users".id = $1;
+SELECT "Users".id, "DomainModeratorAssignments".assigned_at, "DomainModeratorAssignments".domain FROM "Users" INNER JOIN "DomainModeratorAssignments" on "Users".id = "DomainModeratorAssignments".user_id WHERE "Users".id = $1;
 
 -- name: GetUserByEmail :one
 SELECT * FROM "Users"

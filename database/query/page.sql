@@ -1,6 +1,6 @@
 
 -- name: GetCommentsAtPath :many
-select "Comments".ID, Author, Content, "Comments".Created_At, Parent, "Comments"."hidden", Removed, "Users"."username" FROM "Comments" INNER JOIN "Users" on "Comments".author = "Users"."ID" WHERE "Comments"."pathid" = $1;
+select "Comments".ID, Author, Content, "Comments".Created_At, Parent, "Comments"."hidden", Removed, "Users"."username" FROM "Comments" INNER JOIN "Users" on "Comments".author = "Users"."ID" WHERE "Comments"."path_id" = $1;
 
 -- name: GetCommentVotes :many
 select "user_id", "category", "value" From "VoteRecords" WHERE "VoteRecords"."comment_id" = $1;
@@ -17,7 +17,7 @@ INSERT INTO "VoteRecords" (
 
 -- name: CreateComment :exec
 INSERT INTO "Comments" (
-    pathid,
+    path_id,
     author,
     content,
     parent

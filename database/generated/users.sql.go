@@ -47,7 +47,7 @@ INSERT INTO "Users" (
     email
 ) VALUES (
     $1, $2, $3
-) RETURNING id, username, password, email, created_at, last_login, profile_blurb, banned
+) RETURNING id, username, password, email, is_verified, created_at, last_login, profile_blurb, banned
 `
 
 type CreateUserParams struct {
@@ -64,6 +64,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Username,
 		&i.Password,
 		&i.Email,
+		&i.IsVerified,
 		&i.CreatedAt,
 		&i.LastLogin,
 		&i.ProfileBlurb,
@@ -83,7 +84,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, username, password, email, created_at, last_login, profile_blurb, banned FROM "Users"
+SELECT id, username, password, email, is_verified, created_at, last_login, profile_blurb, banned FROM "Users"
 WHERE "email" = $1 LIMIT 1
 `
 
@@ -95,6 +96,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.Username,
 		&i.Password,
 		&i.Email,
+		&i.IsVerified,
 		&i.CreatedAt,
 		&i.LastLogin,
 		&i.ProfileBlurb,
@@ -104,7 +106,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByUserId = `-- name: GetUserByUserId :one
-SELECT id, username, password, email, created_at, last_login, profile_blurb, banned FROM "Users"
+SELECT id, username, password, email, is_verified, created_at, last_login, profile_blurb, banned FROM "Users"
 WHERE "id" = $1 LIMIT 1
 `
 
@@ -116,6 +118,7 @@ func (q *Queries) GetUserByUserId(ctx context.Context, id int64) (User, error) {
 		&i.Username,
 		&i.Password,
 		&i.Email,
+		&i.IsVerified,
 		&i.CreatedAt,
 		&i.LastLogin,
 		&i.ProfileBlurb,
@@ -125,7 +128,7 @@ func (q *Queries) GetUserByUserId(ctx context.Context, id int64) (User, error) {
 }
 
 const getUserByUserName = `-- name: GetUserByUserName :one
-SELECT id, username, password, email, created_at, last_login, profile_blurb, banned FROM "Users"
+SELECT id, username, password, email, is_verified, created_at, last_login, profile_blurb, banned FROM "Users"
 WHERE "username" = $1 LIMIT 1
 `
 
@@ -137,6 +140,7 @@ func (q *Queries) GetUserByUserName(ctx context.Context, username string) (User,
 		&i.Username,
 		&i.Password,
 		&i.Email,
+		&i.IsVerified,
 		&i.CreatedAt,
 		&i.LastLogin,
 		&i.ProfileBlurb,
@@ -146,13 +150,13 @@ func (q *Queries) GetUserByUserName(ctx context.Context, username string) (User,
 }
 
 const getUserDomainModeratorAssignments = `-- name: GetUserDomainModeratorAssignments :many
-SELECT "Users".id, "DomainModeratorAssignments".granted_at, "DomainModeratorAssignments".domain FROM "Users" INNER JOIN "DomainModeratorAssignments" on "Users".id = "DomainModeratorAssignments".user_id WHERE "Users".id = $1
+SELECT "Users".id, "DomainModeratorAssignments".assigned_at, "DomainModeratorAssignments".domain FROM "Users" INNER JOIN "DomainModeratorAssignments" on "Users".id = "DomainModeratorAssignments".user_id WHERE "Users".id = $1
 `
 
 type GetUserDomainModeratorAssignmentsRow struct {
-	ID        int64     `json:"id"`
-	GrantedAt time.Time `json:"granted_at"`
-	Domain    string    `json:"domain"`
+	ID         int64     `json:"id"`
+	AssignedAt time.Time `json:"assigned_at"`
+	Domain     string    `json:"domain"`
 }
 
 func (q *Queries) GetUserDomainModeratorAssignments(ctx context.Context, id int64) ([]GetUserDomainModeratorAssignmentsRow, error) {
@@ -164,7 +168,7 @@ func (q *Queries) GetUserDomainModeratorAssignments(ctx context.Context, id int6
 	var items []GetUserDomainModeratorAssignmentsRow
 	for rows.Next() {
 		var i GetUserDomainModeratorAssignmentsRow
-		if err := rows.Scan(&i.ID, &i.GrantedAt, &i.Domain); err != nil {
+		if err := rows.Scan(&i.ID, &i.AssignedAt, &i.Domain); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -179,23 +183,23 @@ func (q *Queries) GetUserDomainModeratorAssignments(ctx context.Context, id int6
 }
 
 const getUserGlobalModeratorAssignment = `-- name: GetUserGlobalModeratorAssignment :one
-SELECT "Users".id, "GlobalModeratorAssignments".granted_at FROM "Users" INNER JOIN "GlobalModeratorAssignments" on "Users".id = "GlobalModeratorAssignments".user_id WHERE "Users".id = $1
+SELECT "Users".id, "GlobalModeratorAssignments".assigned_at FROM "Users" INNER JOIN "GlobalModeratorAssignments" on "Users".id = "GlobalModeratorAssignments".user_id WHERE "Users".id = $1
 `
 
 type GetUserGlobalModeratorAssignmentRow struct {
-	ID        int64     `json:"id"`
-	GrantedAt time.Time `json:"granted_at"`
+	ID         int64     `json:"id"`
+	AssignedAt time.Time `json:"assigned_at"`
 }
 
 func (q *Queries) GetUserGlobalModeratorAssignment(ctx context.Context, id int64) (GetUserGlobalModeratorAssignmentRow, error) {
 	row := q.db.QueryRowContext(ctx, getUserGlobalModeratorAssignment, id)
 	var i GetUserGlobalModeratorAssignmentRow
-	err := row.Scan(&i.ID, &i.GrantedAt)
+	err := row.Scan(&i.ID, &i.AssignedAt)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, username, password, email, created_at, last_login, profile_blurb, banned FROM "Users"
+SELECT id, username, password, email, is_verified, created_at, last_login, profile_blurb, banned FROM "Users"
 ORDER BY "username"
 `
 
@@ -213,6 +217,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.Username,
 			&i.Password,
 			&i.Email,
+			&i.IsVerified,
 			&i.CreatedAt,
 			&i.LastLogin,
 			&i.ProfileBlurb,

@@ -39,6 +39,32 @@ func (q *Queries) AddCommentVote(ctx context.Context, arg AddCommentVoteParams) 
 	return err
 }
 
+const createComment = `-- name: CreateComment :exec
+INSERT INTO "Comments" (
+    path_id,
+    author,
+    content,
+    parent
+) VALUES ($1, $2, $3, $4)
+`
+
+type CreateCommentParams struct {
+	PathID  int64         `json:"path_id"`
+	Author  int64         `json:"author"`
+	Content string        `json:"content"`
+	Parent  sql.NullInt64 `json:"parent"`
+}
+
+func (q *Queries) CreateComment(ctx context.Context, arg CreateCommentParams) error {
+	_, err := q.db.ExecContext(ctx, createComment,
+		arg.PathID,
+		arg.Author,
+		arg.Content,
+		arg.Parent,
+	)
+	return err
+}
+
 const getCommentVotes = `-- name: GetCommentVotes :many
 select "user_id", "category", "value" From "VoteRecords" WHERE "VoteRecords"."comment_id" = $1
 `
@@ -73,7 +99,7 @@ func (q *Queries) GetCommentVotes(ctx context.Context, commentID int64) ([]GetCo
 }
 
 const getCommentsAtPath = `-- name: GetCommentsAtPath :many
-select "Comments".ID, Author, Content, "Comments".Created_At, Parent, "Comments"."hidden", Removed, "Users"."username" FROM "Comments" INNER JOIN "Users" on "Comments".author = "Users"."ID" WHERE "Comments"."pathid" = $1
+select "Comments".ID, Author, Content, "Comments".Created_At, Parent, "Comments"."hidden", Removed, "Users"."username" FROM "Comments" INNER JOIN "Users" on "Comments".author = "Users"."ID" WHERE "Comments"."path_id" = $1
 `
 
 type GetCommentsAtPathRow struct {
@@ -87,8 +113,8 @@ type GetCommentsAtPathRow struct {
 	Username  string        `json:"username"`
 }
 
-func (q *Queries) GetCommentsAtPath(ctx context.Context, pathid int64) ([]GetCommentsAtPathRow, error) {
-	rows, err := q.db.QueryContext(ctx, getCommentsAtPath, pathid)
+func (q *Queries) GetCommentsAtPath(ctx context.Context, pathID int64) ([]GetCommentsAtPathRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCommentsAtPath, pathID)
 	if err != nil {
 		return nil, err
 	}
