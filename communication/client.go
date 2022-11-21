@@ -136,8 +136,8 @@ type Register struct {
 	AgreedToTerms bool
 }
 
-// RequestValidation is dispatched to the server when the client wants a new validation code. If a client does not validate their account in a timely fashion, the validation code expires. The client may request a new validation code through their settings tab. When they do so, this entity is created and dispatched to the server.
-type RequestValidation struct{}
+// RequestVerification is dispatched to the server when the client wants a new validation code. If a client does not validate their account in a timely fashion, the validation code expires. The client may request a new validation code through their settings tab. When they do so, this entity is created and dispatched to the server.
+type RequestVerification struct{}
 
 // SetNewPass is dispatched to the Server when the user changes their password. After submitting a valid password reset code, users are prompted to set a new password. When they subsequently click “submit”, this request is dispatched to the server.
 type SetNewPass struct {
@@ -145,8 +145,8 @@ type SetNewPass struct {
 	RetypePassword string
 }
 
-// Validate is dispatched to the server when the client inputs a validation code they received in an email to verify their account.
-type Validate struct {
+// Verify is dispatched to the server when the client inputs a validation code they received in an email to verify their account.
+type Verify struct {
 	Code int32
 }
 
@@ -187,6 +187,11 @@ type ViewLogs struct {
 	ForIp string
 	// Name of the domain. An empty string represents all domains.
 	ForDomain string
+
+	// Get only logs starting from this time
+	StartingAt int64
+	// Get only logs finishing at this time
+	EndingAt int64
 }
 
 // ViewModRecords is dispatched to the server when an admin requests moderation records. It does not have any data. The server will always respond to this with all moderation records, sorted from newest to oldest.

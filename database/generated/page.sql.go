@@ -11,34 +11,6 @@ import (
 	"time"
 )
 
-const addCommentVote = `-- name: AddCommentVote :exec
-INSERT INTO "VoteRecords" (
-    comment_id,
-    category,
-    user_id,
-    value
-) VALUES (
-    $1, $2, $3, $4
-)
-`
-
-type AddCommentVoteParams struct {
-	CommentID int64         `json:"comment_id"`
-	Category  string        `json:"category"`
-	UserID    sql.NullInt64 `json:"user_id"`
-	Value     sql.NullInt64 `json:"value"`
-}
-
-func (q *Queries) AddCommentVote(ctx context.Context, arg AddCommentVoteParams) error {
-	_, err := q.db.ExecContext(ctx, addCommentVote,
-		arg.CommentID,
-		arg.Category,
-		arg.UserID,
-		arg.Value,
-	)
-	return err
-}
-
 const createComment = `-- name: CreateComment :exec
 INSERT INTO "Comments" (
     path_id,
@@ -62,6 +34,48 @@ func (q *Queries) CreateComment(ctx context.Context, arg CreateCommentParams) er
 		arg.Content,
 		arg.Parent,
 	)
+	return err
+}
+
+const createCommentVote = `-- name: CreateCommentVote :exec
+INSERT INTO "VoteRecords" (
+    comment_id,
+    category,
+    user_id,
+    value
+) VALUES (
+    $1, $2, $3, $4
+)
+`
+
+type CreateCommentVoteParams struct {
+	CommentID int64         `json:"comment_id"`
+	Category  string        `json:"category"`
+	UserID    sql.NullInt64 `json:"user_id"`
+	Value     sql.NullInt64 `json:"value"`
+}
+
+func (q *Queries) CreateCommentVote(ctx context.Context, arg CreateCommentVoteParams) error {
+	_, err := q.db.ExecContext(ctx, createCommentVote,
+		arg.CommentID,
+		arg.Category,
+		arg.UserID,
+		arg.Value,
+	)
+	return err
+}
+
+const deleteCommentVote = `-- name: DeleteCommentVote :exec
+DELETE FROM "VoteRecords" WHERE user_id = $1 AND comment_id = $2
+`
+
+type DeleteCommentVoteParams struct {
+	UserID    sql.NullInt64 `json:"user_id"`
+	CommentID int64         `json:"comment_id"`
+}
+
+func (q *Queries) DeleteCommentVote(ctx context.Context, arg DeleteCommentVoteParams) error {
+	_, err := q.db.ExecContext(ctx, deleteCommentVote, arg.UserID, arg.CommentID)
 	return err
 }
 
@@ -143,4 +157,20 @@ func (q *Queries) GetCommentsAtPath(ctx context.Context, pathID int64) ([]GetCom
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateCommentVote = `-- name: UpdateCommentVote :exec
+UPDATE "VoteRecords" SET value = $3
+WHERE user_id = $1 AND comment_id = $2
+`
+
+type UpdateCommentVoteParams struct {
+	UserID    sql.NullInt64 `json:"user_id"`
+	CommentID int64         `json:"comment_id"`
+	Value     sql.NullInt64 `json:"value"`
+}
+
+func (q *Queries) UpdateCommentVote(ctx context.Context, arg UpdateCommentVoteParams) error {
+	_, err := q.db.ExecContext(ctx, updateCommentVote, arg.UserID, arg.CommentID, arg.Value)
+	return err
 }

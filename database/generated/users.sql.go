@@ -7,36 +7,24 @@ package generated
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
-const changeUserEmail = `-- name: ChangeUserEmail :exec
-UPDATE "Users" SET email = $2
-WHERE id = $1
+const createPWResetRecord = `-- name: CreatePWResetRecord :exec
+INSERT INTO "PasswordResetCodes" (
+    user_id,
+    verify_code
+) VALUES ($1,$2)
 `
 
-type ChangeUserEmailParams struct {
-	ID    int64  `json:"id"`
-	Email string `json:"email"`
+type CreatePWResetRecordParams struct {
+	UserID     sql.NullInt64  `json:"user_id"`
+	VerifyCode sql.NullString `json:"verify_code"`
 }
 
-func (q *Queries) ChangeUserEmail(ctx context.Context, arg ChangeUserEmailParams) error {
-	_, err := q.db.ExecContext(ctx, changeUserEmail, arg.ID, arg.Email)
-	return err
-}
-
-const changeUserPassword = `-- name: ChangeUserPassword :exec
-UPDATE "Users" SET password = $2
-WHERE id = $1
-`
-
-type ChangeUserPasswordParams struct {
-	ID       int64  `json:"id"`
-	Password string `json:"password"`
-}
-
-func (q *Queries) ChangeUserPassword(ctx context.Context, arg ChangeUserPasswordParams) error {
-	_, err := q.db.ExecContext(ctx, changeUserPassword, arg.ID, arg.Password)
+func (q *Queries) CreatePWResetRecord(ctx context.Context, arg CreatePWResetRecordParams) error {
+	_, err := q.db.ExecContext(ctx, createPWResetRecord, arg.UserID, arg.VerifyCode)
 	return err
 }
 
@@ -73,6 +61,32 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const createVerificationRecord = `-- name: CreateVerificationRecord :exec
+INSERT INTO "VerificationCodes" (
+    user_id,
+    verify_code
+) VALUES ($1, $2)
+`
+
+type CreateVerificationRecordParams struct {
+	UserID     sql.NullInt64  `json:"user_id"`
+	VerifyCode sql.NullString `json:"verify_code"`
+}
+
+func (q *Queries) CreateVerificationRecord(ctx context.Context, arg CreateVerificationRecordParams) error {
+	_, err := q.db.ExecContext(ctx, createVerificationRecord, arg.UserID, arg.VerifyCode)
+	return err
+}
+
+const deletePWResetRecords = `-- name: DeletePWResetRecords :exec
+DELETE FROM "PasswordResetCodes" WHERE user_id = $1
+`
+
+func (q *Queries) DeletePWResetRecords(ctx context.Context, userID sql.NullInt64) error {
+	_, err := q.db.ExecContext(ctx, deletePWResetRecords, userID)
+	return err
+}
+
 const deleteUser = `-- name: DeleteUser :exec
 DELETE FROM "Users"
 WHERE id = $1
@@ -81,6 +95,63 @@ WHERE id = $1
 func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteUser, id)
 	return err
+}
+
+const deleteVerificationRecords = `-- name: DeleteVerificationRecords :exec
+DELETE FROM "VerificationCodes" WHERE user_id = $1
+`
+
+func (q *Queries) DeleteVerificationRecords(ctx context.Context, userID sql.NullInt64) error {
+	_, err := q.db.ExecContext(ctx, deleteVerificationRecords, userID)
+	return err
+}
+
+const getPWResetRecord = `-- name: GetPWResetRecord :many
+SELECT id, user_id, verify_code, created_on FROM "PasswordResetCodes" WHERE user_id = $1
+`
+
+func (q *Queries) GetPWResetRecord(ctx context.Context, userID sql.NullInt64) ([]PasswordResetCode, error) {
+	rows, err := q.db.QueryContext(ctx, getPWResetRecord, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []PasswordResetCode
+	for rows.Next() {
+		var i PasswordResetCode
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.VerifyCode,
+			&i.CreatedOn,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserAdminAssignments = `-- name: GetUserAdminAssignments :one
+SELECT "Users".id, "AdminAssignments".assigned_at from "Users" INNER JOIN "AdminAssignments" on "Users".id = "AdminAssignments".user_id WHERE "Users".id = $1
+`
+
+type GetUserAdminAssignmentsRow struct {
+	ID         int64     `json:"id"`
+	AssignedAt time.Time `json:"assigned_at"`
+}
+
+func (q *Queries) GetUserAdminAssignments(ctx context.Context, id int64) (GetUserAdminAssignmentsRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserAdminAssignments, id)
+	var i GetUserAdminAssignmentsRow
+	err := row.Scan(&i.ID, &i.AssignedAt)
+	return i, err
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
@@ -182,46 +253,40 @@ func (q *Queries) GetUserDomainModeratorAssignments(ctx context.Context, id int6
 	return items, nil
 }
 
-const getUserGlobalModeratorAssignment = `-- name: GetUserGlobalModeratorAssignment :one
+const getUserGlobalModeratorAssignments = `-- name: GetUserGlobalModeratorAssignments :one
 SELECT "Users".id, "GlobalModeratorAssignments".assigned_at FROM "Users" INNER JOIN "GlobalModeratorAssignments" on "Users".id = "GlobalModeratorAssignments".user_id WHERE "Users".id = $1
 `
 
-type GetUserGlobalModeratorAssignmentRow struct {
+type GetUserGlobalModeratorAssignmentsRow struct {
 	ID         int64     `json:"id"`
 	AssignedAt time.Time `json:"assigned_at"`
 }
 
-func (q *Queries) GetUserGlobalModeratorAssignment(ctx context.Context, id int64) (GetUserGlobalModeratorAssignmentRow, error) {
-	row := q.db.QueryRowContext(ctx, getUserGlobalModeratorAssignment, id)
-	var i GetUserGlobalModeratorAssignmentRow
+func (q *Queries) GetUserGlobalModeratorAssignments(ctx context.Context, id int64) (GetUserGlobalModeratorAssignmentsRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserGlobalModeratorAssignments, id)
+	var i GetUserGlobalModeratorAssignmentsRow
 	err := row.Scan(&i.ID, &i.AssignedAt)
 	return i, err
 }
 
-const listUsers = `-- name: ListUsers :many
-SELECT id, username, password, email, is_verified, created_at, last_login, profile_blurb, banned FROM "Users"
-ORDER BY "username"
+const getVerificationRecord = `-- name: GetVerificationRecord :many
+SELECT id, user_id, verify_code, created_on FROM "VerificationCodes" WHERE user_id = $1
 `
 
-func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
-	rows, err := q.db.QueryContext(ctx, listUsers)
+func (q *Queries) GetVerificationRecord(ctx context.Context, userID sql.NullInt64) ([]VerificationCode, error) {
+	rows, err := q.db.QueryContext(ctx, getVerificationRecord, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	var items []VerificationCode
 	for rows.Next() {
-		var i User
+		var i VerificationCode
 		if err := rows.Scan(
 			&i.ID,
-			&i.Username,
-			&i.Password,
-			&i.Email,
-			&i.IsVerified,
-			&i.CreatedAt,
-			&i.LastLogin,
-			&i.ProfileBlurb,
-			&i.Banned,
+			&i.UserID,
+			&i.VerifyCode,
+			&i.CreatedOn,
 		); err != nil {
 			return nil, err
 		}
@@ -234,4 +299,74 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateUserBlurb = `-- name: UpdateUserBlurb :exec
+UPDATE "Users" SET profile_blurb = $2
+WHERE id = $1
+`
+
+type UpdateUserBlurbParams struct {
+	ID           int64          `json:"id"`
+	ProfileBlurb sql.NullString `json:"profile_blurb"`
+}
+
+func (q *Queries) UpdateUserBlurb(ctx context.Context, arg UpdateUserBlurbParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserBlurb, arg.ID, arg.ProfileBlurb)
+	return err
+}
+
+const updateUserEmail = `-- name: UpdateUserEmail :exec
+UPDATE "Users" SET email = $2
+WHERE id = $1
+`
+
+type UpdateUserEmailParams struct {
+	ID    int64  `json:"id"`
+	Email string `json:"email"`
+}
+
+func (q *Queries) UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserEmail, arg.ID, arg.Email)
+	return err
+}
+
+const updateUserLastLogin = `-- name: UpdateUserLastLogin :exec
+UPDATE "Users" SET last_login = NOW()
+WHERE id = $1
+`
+
+func (q *Queries) UpdateUserLastLogin(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, updateUserLastLogin, id)
+	return err
+}
+
+const updateUserPassword = `-- name: UpdateUserPassword :exec
+UPDATE "Users" SET password = $2
+WHERE id = $1
+`
+
+type UpdateUserPasswordParams struct {
+	ID       int64  `json:"id"`
+	Password string `json:"password"`
+}
+
+func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserPassword, arg.ID, arg.Password)
+	return err
+}
+
+const updateUserVerification = `-- name: UpdateUserVerification :exec
+UPDATE "Users" SET is_verified = $2
+WHERE id = $1
+`
+
+type UpdateUserVerificationParams struct {
+	ID         int64        `json:"id"`
+	IsVerified sql.NullBool `json:"is_verified"`
+}
+
+func (q *Queries) UpdateUserVerification(ctx context.Context, arg UpdateUserVerificationParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserVerification, arg.ID, arg.IsVerified)
+	return err
 }

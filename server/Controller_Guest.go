@@ -38,9 +38,9 @@ func (c *GuestController) HandleCommandPasswordResetCode(msg *communication.Pass
 }
 func (c *GuestController) HandleCommandCommentReport(msg *communication.CommentReport, server *Server) {
 }
-func (c *GuestController) HandleCommandRequestValidation(msg *communication.RequestValidation, server *Server) {
+func (c *GuestController) HandleCommandRequestValidation(msg *communication.RequestVerification, server *Server) {
 }
-func (c *GuestController) HandleCommandValidate(msg *communication.Validate, server *Server) {}
+func (c *GuestController) HandleCommandValidate(msg *communication.Verify, server *Server)   {}
 func (c *GuestController) HandleCommandViewBans(msg *communication.ViewBans, server *Server) {}
 func (c *GuestController) HandleCommandViewLogs(msg *communication.ViewLogs, server *Server) {}
 func (c *GuestController) HandleCommandViewDomainReport(msg *communication.ViewDomainReport, server *Server) {

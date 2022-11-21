@@ -53,6 +53,12 @@ type BanRecord struct {
 	// the username of a user that is banned.
 	bannedUsername string
 
+	// the id of the user that did the banning
+	bannedByUserID int64
+
+	// the username of the user that did the banning
+	bannedByUsername string
+
 	// Whether the user was banned (true) or unbanned (false).
 	setBannedTo bool
 }

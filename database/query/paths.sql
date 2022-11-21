@@ -16,3 +16,4 @@ INSERT INTO "Paths" (
     domain,
     path
 ) VALUES ($1, $2);
+

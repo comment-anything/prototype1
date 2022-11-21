@@ -5,7 +5,7 @@ select "Comments".ID, Author, Content, "Comments".Created_At, Parent, "Comments"
 -- name: GetCommentVotes :many
 select "user_id", "category", "value" From "VoteRecords" WHERE "VoteRecords"."comment_id" = $1;
 
--- name: AddCommentVote :exec
+-- name: CreateCommentVote :exec
 INSERT INTO "VoteRecords" (
     comment_id,
     category,
@@ -15,6 +15,10 @@ INSERT INTO "VoteRecords" (
     $1, $2, $3, $4
 );
 
+-- name: UpdateCommentVote :exec
+UPDATE "VoteRecords" SET value = $3
+WHERE user_id = $1 AND comment_id = $2;
+
 -- name: CreateComment :exec
 INSERT INTO "Comments" (
     path_id,
@@ -22,3 +26,6 @@ INSERT INTO "Comments" (
     content,
     parent
 ) VALUES ($1, $2, $3, $4);
+
+-- name: DeleteCommentVote :exec
+DELETE FROM "VoteRecords" WHERE user_id = $1 AND comment_id = $2;

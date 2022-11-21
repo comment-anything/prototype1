@@ -13,6 +13,7 @@ type AdminAssignment struct {
 	ID             int64        `json:"id"`
 	AssignedTo     int64        `json:"assigned_to"`
 	AssignedBy     int64        `json:"assigned_by"`
+	AssignedAt     time.Time    `json:"assigned_at"`
 	IsDeactivation sql.NullBool `json:"is_deactivation"`
 }
 
@@ -40,7 +41,7 @@ type Comment struct {
 type CommentModerationAction struct {
 	ID               int64          `json:"id"`
 	TakenBy          int64          `json:"taken_by"`
-	CommentId        int64          `json:"commentId"`
+	CommentID        int64          `json:"comment_id"`
 	Reason           sql.NullString `json:"reason"`
 	TakenOn          sql.NullTime   `json:"taken_on"`
 	SetHiddenTo      sql.NullBool   `json:"set_hidden_to"`
@@ -54,7 +55,7 @@ type CommentReport struct {
 	Comment       int64          `json:"comment"`
 	Reason        sql.NullString `json:"reason"`
 	ActionTaken   sql.NullBool   `json:"action_taken"`
-	TimeCreated   sql.NullTime   `json:"time_created"`
+	TimeCreated   time.Time      `json:"time_created"`
 }
 
 type Domain struct {
@@ -95,10 +96,11 @@ type GlobalModeratorAssignment struct {
 }
 
 type Log struct {
-	ID   int64          `json:"id"`
-	User sql.NullInt64  `json:"user"`
-	Ip   sql.NullString `json:"ip"`
-	Url  sql.NullString `json:"url"`
+	ID     int64          `json:"id"`
+	UserID sql.NullInt64  `json:"user_id"`
+	Ip     sql.NullString `json:"ip"`
+	Url    sql.NullString `json:"url"`
+	AtTime time.Time      `json:"at_time"`
 }
 
 type PasswordResetCode struct {
@@ -127,7 +129,7 @@ type User struct {
 	Banned       sql.NullBool   `json:"banned"`
 }
 
-type ValidationCode struct {
+type VerificationCode struct {
 	ID         int64          `json:"id"`
 	UserID     sql.NullInt64  `json:"user_id"`
 	VerifyCode sql.NullString `json:"verify_code"`

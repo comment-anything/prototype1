@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS "DomainBans";
 DROP TABLE IF EXISTS "RemovedComments";
 DROP TABLE IF EXISTS "VoteRecords";
 DROP TABLE IF EXISTS "Feedbacks";
-DROP TABLE IF EXISTS "ValidationCodes";
+DROP TABLE IF EXISTS "VerificationCodes";
 DROP TABLE IF EXISTS "PasswordResetCodes";
 DROP TABLE IF EXISTS "CommentReports";
 DROP TABLE IF EXISTS "Comments";
