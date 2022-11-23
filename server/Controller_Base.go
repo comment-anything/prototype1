@@ -23,7 +23,7 @@ type UserControllerInterface interface {
 	HandleCommandLogout(*Server)
 	HandleCommandModerate(*communication.Moderate, *Server)
 	HandleCommandPasswordResetCode(*communication.PasswordResetCode, *Server)
-	HandleCommandCommentReport(*communication.CommentReport, *Server)
+	HandleCommandCommentReport(*communication.PostCommentReport, *Server)
 	HandleCommandRequestValidation(*communication.RequestVerification, *Server)
 	HandleCommandValidate(*communication.Verify, *Server)
 	HandleCommandViewBans(*communication.ViewBans, *Server)
@@ -33,9 +33,9 @@ type UserControllerInterface interface {
 	HandleCommandViewModRecords(*communication.ViewModRecords, *Server)
 	HandleCommandViewMods(*communication.ViewMods, *Server)
 
-	Respond(r http.Request, w http.ResponseWriter)
+	Respond(r *http.Request, w http.ResponseWriter)
 	GetCurrentPage() *Page
-	dispatchResponse(r http.Request, w http.ResponseWriter)
+	dispatchResponse(r *http.Request, w http.ResponseWriter)
 }
 
 type UserControllerBase struct {
@@ -47,7 +47,7 @@ type UserControllerBase struct {
 }
 
 // Respond is called by Server on the Controller at the end of the HTTP Response Life Cycle. All built up responses are written to the HTTP Response which is dispatched.
-func (u *UserControllerBase) dispatchResponse(r http.Request, w http.ResponseWriter) {
+func (u *UserControllerBase) dispatchResponse(r *http.Request, w http.ResponseWriter) {
 	bytes, err := json.Marshal(u.nextResponse)
 	if err != nil {
 		w.Write(bytes)

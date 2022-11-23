@@ -117,3 +117,8 @@ func GetToken(userid int64) (string, error) {
 	}
 	return tstring, nil
 }
+
+func getControllerInterfaceFromContext(c context.Context) UserControllerInterface {
+	controller := c.Value(CtxController)        // returns "any"
+	return controller.(UserControllerInterface) // type assertion -> any to UserControllerInterface
+}

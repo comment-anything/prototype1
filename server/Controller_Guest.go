@@ -36,8 +36,7 @@ func (c *GuestController) HandleCommandGetUserProfile(msg *communication.GetUser
 func (c *GuestController) HandleCommandModerate(msg *communication.Moderate, server *Server) {}
 func (c *GuestController) HandleCommandPasswordResetCode(msg *communication.PasswordResetCode, server *Server) {
 }
-func (c *GuestController) HandleCommandCommentReport(msg *communication.CommentReport, server *Server) {
-}
+
 func (c *GuestController) HandleCommandRequestValidation(msg *communication.RequestVerification, server *Server) {
 }
 func (c *GuestController) HandleCommandValidate(msg *communication.Verify, server *Server)   {}
@@ -51,6 +50,6 @@ func (c *GuestController) HandleCommandViewModRecords(msg *communication.ViewMod
 }
 func (c *GuestController) HandleCommandViewMods(msg *communication.ViewMods, server *Server) {}
 
-func (c *GuestController) Respond(r http.Request, w http.ResponseWriter) {
+func (c *GuestController) Respond(r *http.Request, w http.ResponseWriter) {
 	c.dispatchResponse(r, w)
 }
