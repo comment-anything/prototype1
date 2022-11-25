@@ -222,6 +222,8 @@ type LoginResponse struct {
 	LoggedInAs UserProfile
 }
 
+type LogoutResponse struct{}
+
 // Message is a general communication entity used to provide feedback to a client that some action has completed (or not completed) on requests where the client has not asked for any particular data.
 type Message struct {
 	Success bool
