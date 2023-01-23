@@ -52,4 +52,8 @@ test_server:
 test_generated:
 	go test ./database/generated -cover
 
+doc:
+	golds -gen -s -nouses -wdpkgs-listing=promoted -source-code-reading=rich -dir=docs -render-doclinks ./main.go
+	golds -dir=docs
+
 

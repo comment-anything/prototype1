@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 
@@ -9,6 +10,7 @@ import (
 )
 
 func main() {
+	flag.Parse()
 	fmt.Println("\n Prototype Started. ")
 	util.Config.Load(".env")
 	server, err := server.New()

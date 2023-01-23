@@ -83,3 +83,17 @@ Finally, run the server. It will listen on the port configured in the .env file.
 
 
 
+# Docs
+
+[See Golds](https://go101.org/apps-and-libs/golds.html)
+
+Tested this on 1/22/2023
+
+Install `go install go101.org/golds@latest` to install golds.
+
+Run `make docs` to then make docs using golds.
+
+Added the command to make which will generate static docs for us. Figure we can do it weekly in implementation phase or even set up a github workflow for it.
+
+
+
